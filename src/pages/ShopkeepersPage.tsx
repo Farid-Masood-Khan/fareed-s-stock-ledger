@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Users, ArrowUp, ArrowDown } from "lucide-react";
 import { Shopkeeper } from "@/types";
 import { useToast } from "@/hooks/use-toast";
+import PrintReceipt from '@/components/receipt/PrintReceipt';
 
 const ShopkeepersPage = () => {
   const { shopkeepers, transactions, addShopkeeper, updateShopkeeper, addTransaction } = useStore();
@@ -47,7 +48,6 @@ const ShopkeepersPage = () => {
   });
   const { toast } = useToast();
 
-  // Filter shopkeepers based on search term
   const filteredShopkeepers = shopkeepers.filter(
     (shopkeeper) =>
       shopkeeper.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -55,14 +55,12 @@ const ShopkeepersPage = () => {
       (shopkeeper.address || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Get transactions for selected shopkeeper
   const shopkeeperTransactions = selectedShopkeeper
     ? transactions
         .filter((t) => t.shopkeeperId === selectedShopkeeper.id)
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     : [];
 
-  // Handle adding new shopkeeper
   const handleAddShopkeeper = () => {
     if (!newShopkeeper.name) {
       toast({
@@ -93,7 +91,6 @@ const ShopkeepersPage = () => {
     setIsAddDialogOpen(false);
   };
 
-  // Handle adding new payment
   const handleAddPayment = () => {
     if (!selectedShopkeeper) return;
     
@@ -426,70 +423,80 @@ const ShopkeepersPage = () => {
                   <Card>
                     <CardContent className="py-4">
                       <div className="overflow-x-auto">
-                        {shopkeeperTransactions.length === 0 ? (
-                          <p className="text-center py-4 text-muted-foreground">No transactions found</p>
-                        ) : (
-                          <table className="w-full">
-                            <thead>
-                              <tr className="bg-muted/50">
-                                <th className="text-left p-2">Date</th>
-                                <th className="text-left p-2">Type</th>
-                                <th className="text-right p-2">Amount</th>
-                                <th className="text-left p-2">Notes</th>
-                                <th className="text-right p-2">Running Balance</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {shopkeeperTransactions.map((transaction, index) => {
-                                // Calculate running balance
-                                let runningBalance = selectedShopkeeper.balance;
-                                for (let i = 0; i < index; i++) {
-                                  const t = shopkeeperTransactions[i];
-                                  switch (t.type) {
-                                    case "SALE":
-                                      runningBalance += t.amount;
-                                      break;
-                                    case "PURCHASE":
-                                      runningBalance -= t.amount;
-                                      break;
-                                    case "PAYMENT_RECEIVED":
-                                      runningBalance += t.amount;
-                                      break;
-                                    case "PAYMENT_MADE":
-                                      runningBalance -= t.amount;
-                                      break;
-                                  }
+                        <table className="w-full">
+                          <thead>
+                            <tr className="bg-muted/50">
+                              <th className="text-left p-2">Date</th>
+                              <th className="text-left p-2">Type</th>
+                              <th className="text-right p-2">Amount</th>
+                              <th className="text-left p-2">Notes</th>
+                              <th className="text-right p-2">Running Balance</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {shopkeeperTransactions.map((transaction, index) => {
+                              let runningBalance = selectedShopkeeper.balance;
+                              for (let i = 0; i < index; i++) {
+                                const t = shopkeeperTransactions[i];
+                                switch (t.type) {
+                                  case "SALE":
+                                    runningBalance += t.amount;
+                                    break;
+                                  case "PURCHASE":
+                                    runningBalance -= t.amount;
+                                    break;
+                                  case "PAYMENT_RECEIVED":
+                                    runningBalance += t.amount;
+                                    break;
+                                  case "PAYMENT_MADE":
+                                    runningBalance -= t.amount;
+                                    break;
                                 }
-                                
-                                return (
-                                  <tr key={transaction.id} className="border-t hover:bg-muted/50">
-                                    <td className="p-2">{formatDate(transaction.date)}</td>
-                                    <td className="p-2">
-                                      <Badge className={getTransactionTypeColor(transaction.type)}>
-                                        {formatTransactionType(transaction.type)}
-                                      </Badge>
-                                    </td>
-                                    <td className="p-2 text-right">{formatCurrency(transaction.amount)}</td>
-                                    <td className="p-2">{transaction.notes || "—"}</td>
-                                    <td className="p-2 text-right">
-                                      {runningBalance < 0 ? (
-                                        <span className="text-red-600">
-                                          {formatCurrency(Math.abs(runningBalance))} Due
-                                        </span>
-                                      ) : runningBalance > 0 ? (
-                                        <span className="text-green-600">
-                                          {formatCurrency(runningBalance)} Owed
-                                        </span>
-                                      ) : (
-                                        <span>No Balance</span>
-                                      )}
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        )}
+                              }
+                              
+                              return (
+                                <tr key={transaction.id} className="border-t hover:bg-muted/50">
+                                  <td className="p-2">{formatDate(transaction.date)}</td>
+                                  <td className="p-2">
+                                    <Badge className={getTransactionTypeColor(transaction.type)}>
+                                      {formatTransactionType(transaction.type)}
+                                    </Badge>
+                                  </td>
+                                  <td className="p-2 text-right">{formatCurrency(transaction.amount)}</td>
+                                  <td className="p-2">{transaction.notes || "—"}</td>
+                                  <td className="p-2 text-right">
+                                    {runningBalance < 0 ? (
+                                      <span className="text-red-600">
+                                        {formatCurrency(Math.abs(runningBalance))} Due
+                                      </span>
+                                    ) : runningBalance > 0 ? (
+                                      <span className="text-green-600">
+                                        {formatCurrency(runningBalance)} Owed
+                                      </span>
+                                    ) : (
+                                      <span>No Balance</span>
+                                    )}
+                                  </td>
+                                  <td className="p-2">
+                                    {transaction.type === 'SALE' && (
+                                      <PrintReceipt
+                                        sale={{
+                                          id: transaction.id,
+                                          date: transaction.date,
+                                          items: transaction.relatedItems || [],
+                                          total: transaction.amount,
+                                          paymentMethod: 'CREDIT',
+                                          invoiceNumber: transaction.notes?.split(': ')[1] || transaction.id,
+                                          shopkeeperId: transaction.shopkeeperId
+                                        }}
+                                      />
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
                       </div>
                     </CardContent>
                   </Card>
