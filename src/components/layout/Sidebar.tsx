@@ -1,0 +1,53 @@
+
+import React from "react";
+import { NavLink } from "react-router-dom";
+import { Barcode, ChartBar, Receipt, Users, Wallet, FolderOpen } from "lucide-react";
+
+interface SidebarProps {
+  isOpen: boolean;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
+  const navItems = [
+    { name: "Dashboard", icon: <ChartBar className="h-5 w-5" />, path: "/" },
+    { name: "Inventory", icon: <Barcode className="h-5 w-5" />, path: "/inventory" },
+    { name: "Sales", icon: <Receipt className="h-5 w-5" />, path: "/sales" },
+    { name: "Shopkeepers", icon: <Users className="h-5 w-5" />, path: "/shopkeepers" },
+    { name: "Reports", icon: <FolderOpen className="h-5 w-5" />, path: "/reports" },
+    { name: "Financial", icon: <Wallet className="h-5 w-5" />, path: "/financial" },
+  ];
+
+  return (
+    <aside
+      className={`fixed left-0 top-14 h-full bg-white shadow-lg transition-all duration-300 z-10 ${
+        isOpen ? "w-64" : "w-0"
+      }`}
+    >
+      <div className="h-full overflow-y-auto">
+        <nav className="mt-4 px-2">
+          <ul className="space-y-1">
+            {navItems.map((item) => (
+              <li key={item.name}>
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `flex items-center px-4 py-3 text-gray-700 rounded-md transition-all ${
+                      isActive
+                        ? "bg-brand-200 text-brand-800 font-semibold"
+                        : "hover:bg-gray-100"
+                    }`
+                  }
+                >
+                  <span className="mr-3">{item.icon}</span>
+                  <span>{item.name}</span>
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </aside>
+  );
+};
+
+export default Sidebar;
