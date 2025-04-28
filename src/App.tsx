@@ -18,41 +18,44 @@ import NotFound from "./pages/NotFound";
 import { StoreProvider } from "./context/StoreContext";
 import { SettingsProvider } from "./context/SettingsContext";
 import AuthWrapper from "./components/auth/AuthWrapper";
+import { LazyMotion, domAnimation } from "framer-motion";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <SettingsProvider>
-        <StoreProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="*" element={
-                <AuthWrapper>
-                  <Layout>
-                    <Routes>
-                      <Route path="/" element={<Dashboard />} />
-                      <Route path="/inventory" element={<Inventory />} />
-                      <Route path="/sales" element={<Sales />} />
-                      <Route path="/shopkeepers" element={<ShopkeepersPage />} />
-                      <Route path="/reports" element={<ReportsPage />} />
-                      <Route path="/financial" element={<FinancialPage />} />
-                      <Route path="/settings" element={<SettingsPage />} />
-                      <Route path="/expenses" element={<ExpensesPage />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Layout>
-                </AuthWrapper>
-              } />
-            </Routes>
-          </BrowserRouter>
-        </StoreProvider>
-      </SettingsProvider>
-    </TooltipProvider>
+    <LazyMotion features={domAnimation}>
+      <TooltipProvider>
+        <SettingsProvider>
+          <StoreProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="*" element={
+                  <AuthWrapper>
+                    <Layout>
+                      <Routes>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/inventory" element={<Inventory />} />
+                        <Route path="/sales" element={<Sales />} />
+                        <Route path="/shopkeepers" element={<ShopkeepersPage />} />
+                        <Route path="/reports" element={<ReportsPage />} />
+                        <Route path="/financial" element={<FinancialPage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
+                        <Route path="/expenses" element={<ExpensesPage />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </Layout>
+                  </AuthWrapper>
+                } />
+              </Routes>
+            </BrowserRouter>
+          </StoreProvider>
+        </SettingsProvider>
+      </TooltipProvider>
+    </LazyMotion>
   </QueryClientProvider>
 );
 

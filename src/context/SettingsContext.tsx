@@ -11,6 +11,10 @@ interface SettingsContextType {
   setFontSize: (size: FontSize) => void;
   isMoneyHidden: boolean;
   toggleMoneyVisibility: () => void;
+  soundEnabled: boolean;
+  toggleSoundEnabled: () => void;
+  animationsEnabled: boolean;
+  toggleAnimationsEnabled: () => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -47,6 +51,12 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   const [isMoneyHidden, setIsMoneyHidden] = useState<boolean>(() => {
     return localStorage.getItem("hideMoneyDetails") === "true";
   });
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
+    return localStorage.getItem("soundEnabled") !== "false"; // Default to true
+  });
+  const [animationsEnabled, setAnimationsEnabled] = useState<boolean>(() => {
+    return localStorage.getItem("animationsEnabled") !== "false"; // Default to true
+  });
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
@@ -69,12 +79,29 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     localStorage.setItem("hideMoneyDetails", isMoneyHidden.toString());
   }, [isMoneyHidden]);
 
+  useEffect(() => {
+    localStorage.setItem("soundEnabled", soundEnabled.toString());
+  }, [soundEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem("animationsEnabled", animationsEnabled.toString());
+    document.documentElement.classList.toggle("reduce-motion", !animationsEnabled);
+  }, [animationsEnabled]);
+
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
   const toggleMoneyVisibility = () => {
     setIsMoneyHidden((prev) => !prev);
+  };
+
+  const toggleSoundEnabled = () => {
+    setSoundEnabled((prev) => !prev);
+  };
+
+  const toggleAnimationsEnabled = () => {
+    setAnimationsEnabled((prev) => !prev);
   };
 
   const value = {
@@ -84,6 +111,10 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     setFontSize,
     isMoneyHidden,
     toggleMoneyVisibility,
+    soundEnabled,
+    toggleSoundEnabled,
+    animationsEnabled,
+    toggleAnimationsEnabled,
   };
 
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
