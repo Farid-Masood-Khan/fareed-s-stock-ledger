@@ -6,9 +6,11 @@ import { useSettings } from "@/context/SettingsContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
 import { useNotificationSound } from "@/hooks/use-notification-sound";
+
 interface SidebarProps {
   isOpen: boolean;
 }
+
 const Sidebar: React.FC<SidebarProps> = ({
   isOpen
 }) => {
@@ -24,6 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const {
     playSound
   } = useNotificationSound();
+
   const navItems = [{
     name: "Dashboard",
     icon: <Home className="h-5 w-5" />,
@@ -57,6 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     icon: <Settings className="h-5 w-5" />,
     path: "/settings"
   }];
+
   const handleLogout = () => {
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("username");
@@ -68,16 +72,14 @@ const Sidebar: React.FC<SidebarProps> = ({
     navigate("/login");
   };
 
-  // Check active route for mobile view auto-close
   useEffect(() => {
     if (isMobile && isOpen) {
-      // Close sidebar on route change for mobile
       const currentPath = location.pathname;
-      // We're just checking for changes, no need to do anything here
     }
   }, [location, isMobile, isOpen]);
+
   return <aside className={`fixed left-0 top-14 h-full z-50 transition-all duration-300 ${theme === 'dark' ? 'bg-gray-900 border-r border-gray-800' : 'bg-white border-r border-gray-200'} shadow-lg ${isOpen ? "w-64" : "w-0"}`}>
-      <div className="h-full flex flex-col scrollbar-thin scrollbar-thumb-rounded-md scrollbar-track-transparent scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500 mx-0 px-px py-0">
+      <div className="h-full flex flex-col overflow-y-auto scrollbar-custom mx-0 px-px py-0">
         <nav className="mt-4 px-2 flex-1">
           <ul className="space-y-1">
             {navItems.map(item => <motion.li key={item.name} initial={{
@@ -107,7 +109,6 @@ const Sidebar: React.FC<SidebarProps> = ({
           </ul>
         </nav>
 
-        {/* Logout Button */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-800">
           <button onClick={handleLogout} className={`flex w-full items-center px-4 py-3 text-gray-700 rounded-md transition-all ${theme === 'dark' ? "hover:bg-gray-800 text-gray-300" : "hover:bg-gray-100"}`}>
             <LogOut className="h-5 w-5 mr-3 text-red-500" />
@@ -122,4 +123,5 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
     </aside>;
 };
+
 export default Sidebar;
