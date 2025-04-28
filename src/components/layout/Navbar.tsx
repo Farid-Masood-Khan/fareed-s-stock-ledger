@@ -31,7 +31,8 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
               variant="ghost"
               size="icon"
               onClick={toggleSidebar}
-              className="text-white hover:bg-brand-700"
+              className="text-white hover:bg-brand-700 relative z-10"
+              aria-label="Toggle sidebar"
             >
               <Menu className="h-6 w-6" />
               <span className="sr-only">Toggle sidebar</span>
