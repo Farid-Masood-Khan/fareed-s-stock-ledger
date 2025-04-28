@@ -2,9 +2,11 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useStore } from "@/context/StoreContext";
+import { useSettings } from "@/context/SettingsContext";
 import { formatCurrency } from "@/utils/formatters";
-import { ChartBar, Users, Wallet, Receipt } from "lucide-react";
+import { ChartBar, Users, Wallet, Receipt, EyeOff } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, BarChart, Bar } from 'recharts';
+import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   const { 
@@ -14,13 +16,20 @@ const Dashboard = () => {
     products,
     sales 
   } = useStore();
+  
+  const { isMoneyHidden, toggleMoneyVisibility } = useSettings();
 
   const dailyReport = generateSalesReport("daily");
   const weeklyReport = generateSalesReport("weekly");
   const stockReport = generateStockReport();
   const financialSummary = generateFinancialSummary();
 
-  // Prepare data for recent sales chart
+  // Format money value based on whether it should be hidden
+  const formatMoney = (value: number) => {
+    return isMoneyHidden ? "***" : formatCurrency(value);
+  };
+
+  // Prepare data for recent sales chart with potentially hidden values
   const last7DaysSales = Array.from({ length: 7 }, (_, index) => {
     const date = new Date();
     date.setDate(date.getDate() - (6 - index));
@@ -57,6 +66,15 @@ const Dashboard = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Dashboard Overview</h1>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={toggleMoneyVisibility}
+          className="flex items-center gap-2"
+        >
+          <EyeOff size={16} />
+          {isMoneyHidden ? "Show Values" : "Hide Values"}
+        </Button>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -66,7 +84,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold">{formatCurrency(dailyReport.totalSales)}</div>
+              <div className="text-2xl font-bold">{formatMoney(dailyReport.totalSales)}</div>
               <p className="text-xs text-muted-foreground mt-1">{dailyReport.salesCount} transactions today</p>
             </div>
             <Receipt className="h-8 w-8 text-brand-600 opacity-80" />
@@ -79,7 +97,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold">{formatCurrency(stockReport.totalValue)}</div>
+              <div className="text-2xl font-bold">{formatMoney(stockReport.totalValue)}</div>
               <p className="text-xs text-muted-foreground mt-1">{stockReport.totalItems} items in stock</p>
             </div>
             <ChartBar className="h-8 w-8 text-brand-600 opacity-80" />
@@ -92,7 +110,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold">{formatCurrency(financialSummary.totalDueFromShopkeepers)}</div>
+              <div className="text-2xl font-bold">{formatMoney(financialSummary.totalDueFromShopkeepers)}</div>
               <p className="text-xs text-muted-foreground mt-1">Due from shopkeepers</p>
             </div>
             <Users className="h-8 w-8 text-brand-600 opacity-80" />
@@ -105,7 +123,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent className="flex items-center justify-between">
             <div>
-              <div className="text-2xl font-bold">{formatCurrency(financialSummary.netBalance)}</div>
+              <div className="text-2xl font-bold">{formatMoney(financialSummary.netBalance)}</div>
               <p className="text-xs text-muted-foreground mt-1">Total assets - liabilities</p>
             </div>
             <Wallet className="h-8 w-8 text-brand-600 opacity-80" />
@@ -126,9 +144,9 @@ const Dashboard = () => {
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
-                <YAxis />
+                <YAxis domain={[0, 'auto']} tickFormatter={(value) => isMoneyHidden ? "***" : formatCurrency(value)} />
                 <Tooltip 
-                  formatter={(value) => [`${formatCurrency(value as number)}`, 'Sales']}
+                  formatter={(value) => [isMoneyHidden ? "***" : formatCurrency(value as number), 'Sales']}
                 />
                 <Legend />
                 <Line
@@ -155,9 +173,9 @@ const Dashboard = () => {
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
-                <YAxis />
+                <YAxis tickFormatter={(value) => isMoneyHidden ? "***" : formatCurrency(value)} />
                 <Tooltip 
-                  formatter={(value) => [`${formatCurrency(value as number)}`, 'Value']}
+                  formatter={(value) => [isMoneyHidden ? "***" : formatCurrency(value as number), 'Value']}
                 />
                 <Legend />
                 <Bar dataKey="value" name="Value" fill="#3B82F6" />
@@ -191,7 +209,7 @@ const Dashboard = () => {
                         {products.find(p => p.id === product.productId)?.code || 'N/A'}
                       </td>
                       <td className="p-3 text-right">{product.quantitySold}</td>
-                      <td className="p-3 text-right">{formatCurrency(product.revenue)}</td>
+                      <td className="p-3 text-right">{formatMoney(product.revenue)}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -11,31 +11,47 @@ import Sales from "./pages/Sales";
 import ShopkeepersPage from "./pages/ShopkeepersPage";
 import ReportsPage from "./pages/ReportsPage";
 import FinancialPage from "./pages/FinancialPage";
+import SettingsPage from "./pages/SettingsPage";
+import ExpensesPage from "./pages/ExpensesPage";
+import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
 import { StoreProvider } from "./context/StoreContext";
+import { SettingsProvider } from "./context/SettingsContext";
+import AuthWrapper from "./components/auth/AuthWrapper";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <StoreProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Layout>
+      <SettingsProvider>
+        <StoreProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/inventory" element={<Inventory />} />
-              <Route path="/sales" element={<Sales />} />
-              <Route path="/shopkeepers" element={<ShopkeepersPage />} />
-              <Route path="/reports" element={<ReportsPage />} />
-              <Route path="/financial" element={<FinancialPage />} />
-              <Route path="*" element={<NotFound />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="*" element={
+                <AuthWrapper>
+                  <Layout>
+                    <Routes>
+                      <Route path="/" element={<Dashboard />} />
+                      <Route path="/inventory" element={<Inventory />} />
+                      <Route path="/sales" element={<Sales />} />
+                      <Route path="/shopkeepers" element={<ShopkeepersPage />} />
+                      <Route path="/reports" element={<ReportsPage />} />
+                      <Route path="/financial" element={<FinancialPage />} />
+                      <Route path="/settings" element={<SettingsPage />} />
+                      <Route path="/expenses" element={<ExpensesPage />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Layout>
+                </AuthWrapper>
+              } />
             </Routes>
-          </Layout>
-        </BrowserRouter>
-      </StoreProvider>
+          </BrowserRouter>
+        </StoreProvider>
+      </SettingsProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
