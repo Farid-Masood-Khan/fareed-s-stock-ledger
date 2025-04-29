@@ -64,11 +64,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     collapsed: { marginLeft: 0 }
   };
 
+  const pageTransitionVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+    exit: { opacity: 0, y: -20, transition: { duration: 0.2 } }
+  };
+
   return (
     <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
       <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
       <div className="flex relative">
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {sidebarOpen && (
             <motion.div
               id="sidebar"
@@ -84,16 +90,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </AnimatePresence>
         
         {/* Mobile overlay when sidebar is open */}
-        {isMobile && sidebarOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black z-40"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
+        <AnimatePresence>
+          {isMobile && sidebarOpen && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black z-40"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+        </AnimatePresence>
         
         <motion.main
           initial={{ opacity: 0 }}
@@ -106,15 +114,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             sidebarOpen && !isMobile ? "ml-64" : ""
           } w-full max-w-full`}
         >
-          <motion.div 
-            key={location.pathname}
-            initial={animationsEnabled ? { opacity: 0, y: 20 } : { opacity: 1, y: 0 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="w-full"
-          >
-            {children}
-          </motion.div>
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={location.pathname}
+              variants={pageTransitionVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="w-full"
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </motion.main>
       </div>
       <Toaster />

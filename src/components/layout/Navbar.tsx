@@ -38,8 +38,11 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
               <span className="sr-only">Toggle sidebar</span>
             </Button>
             <div className="flex items-center">
-              <Barcode className="h-6 w-6 mr-2" />
-              <span className="font-bold text-xl">Stock Ledger</span>
+              <Barcode className="h-6 w-6 mr-2 animate-pulse" />
+              <div className="flex flex-col">
+                <span className="font-bold text-xl">Subhan Computer</span>
+                <span className="text-xs opacity-80">Stock Management</span>
+              </div>
             </div>
           </div>
           <div className="flex items-center space-x-4">
@@ -50,7 +53,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative rounded-full h-8 w-8 p-0 overflow-hidden">
+                <Button variant="ghost" className="relative rounded-full h-8 w-8 p-0 overflow-hidden hover:bg-brand-700">
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
@@ -72,6 +75,12 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/settings')} className="cursor-pointer">
                   <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/about')} className="cursor-pointer">
+                  <span>About</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/contact')} className="cursor-pointer">
+                  <span>Contact</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 

@@ -15,6 +15,9 @@ import SettingsPage from "./pages/SettingsPage";
 import ExpensesPage from "./pages/ExpensesPage";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
+import ServicesPage from "./pages/ServicesPage";
 import { StoreProvider } from "./context/StoreContext";
 import { SettingsProvider } from "./context/SettingsContext";
 import AuthWrapper from "./components/auth/AuthWrapper";
@@ -43,6 +46,9 @@ const App = () => (
                         <Route path="/shopkeepers" element={<ShopkeepersPage />} />
                         <Route path="/reports" element={<ReportsPage />} />
                         <Route path="/financial" element={<FinancialPage />} />
+                        <Route path="/services" element={<ServicesPage />} />
+                        <Route path="/about" element={<AboutPage />} />
+                        <Route path="/contact" element={<ContactPage />} />
                         <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/expenses" element={<ExpensesPage />} />
                         <Route path="*" element={<NotFound />} />
