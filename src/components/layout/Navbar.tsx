@@ -23,7 +23,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
   const username = localStorage.getItem("username") || "User";
 
   return (
-    <header className={`${theme === 'dark' ? 'bg-gray-900' : 'bg-brand-800'} text-white shadow-md`}>
+    <header className={`${theme === 'dark' ? 'bg-gray-900' : 'bg-gradient-to-r from-brand-700 to-brand-800'} text-white shadow-md z-50`}>
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -31,7 +31,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
               variant="ghost"
               size="icon"
               onClick={toggleSidebar}
-              className="text-white hover:bg-brand-700 relative z-10"
+              className="text-white hover:bg-brand-700/50 relative z-50"
               aria-label="Toggle sidebar"
             >
               <Menu className="h-6 w-6" />
@@ -53,11 +53,11 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative rounded-full h-8 w-8 p-0 overflow-hidden hover:bg-brand-700">
+                <Button variant="ghost" className="relative rounded-full h-8 w-8 p-0 overflow-hidden hover:bg-brand-700/50">
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>
                   <div className="flex flex-col">
                     <span>Signed in as</span>

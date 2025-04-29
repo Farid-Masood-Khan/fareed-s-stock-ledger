@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useStore } from "@/context/StoreContext";
@@ -97,17 +96,17 @@ const Dashboard = () => {
             Welcome to Subhan Computer's Stock Management System
           </p>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={toggleMoneyVisibility}
-          className="flex items-center gap-2"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <EyeOff size={16} />
-          {isMoneyHidden ? "Show Values" : "Hide Values"}
-        </Button>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={toggleMoneyVisibility}
+            className="flex items-center gap-2"
+          >
+            <EyeOff size={16} />
+            {isMoneyHidden ? "Show Values" : "Hide Values"}
+          </Button>
+        </motion.div>
       </motion.div>
       
       <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

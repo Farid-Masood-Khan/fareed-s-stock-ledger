@@ -21,9 +21,18 @@ import ServicesPage from "./pages/ServicesPage";
 import { StoreProvider } from "./context/StoreContext";
 import { SettingsProvider } from "./context/SettingsContext";
 import AuthWrapper from "./components/auth/AuthWrapper";
-import { LazyMotion, domAnimation } from "framer-motion";
+import { LazyMotion, domAnimation, AnimatePresence } from "framer-motion";
 
-const queryClient = new QueryClient();
+// Create a new QueryClient with better error handling
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -32,31 +41,33 @@ const App = () => (
         <SettingsProvider>
           <StoreProvider>
             <Toaster />
-            <Sonner />
+            <Sonner position="top-right" closeButton={true} />
             <BrowserRouter>
-              <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="*" element={
-                  <AuthWrapper>
-                    <Layout>
-                      <Routes>
-                        <Route path="/" element={<Dashboard />} />
-                        <Route path="/inventory" element={<Inventory />} />
-                        <Route path="/sales" element={<Sales />} />
-                        <Route path="/shopkeepers" element={<ShopkeepersPage />} />
-                        <Route path="/reports" element={<ReportsPage />} />
-                        <Route path="/financial" element={<FinancialPage />} />
-                        <Route path="/services" element={<ServicesPage />} />
-                        <Route path="/about" element={<AboutPage />} />
-                        <Route path="/contact" element={<ContactPage />} />
-                        <Route path="/settings" element={<SettingsPage />} />
-                        <Route path="/expenses" element={<ExpensesPage />} />
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </Layout>
-                  </AuthWrapper>
-                } />
-              </Routes>
+              <AnimatePresence mode="wait">
+                <Routes>
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="*" element={
+                    <AuthWrapper>
+                      <Layout>
+                        <Routes>
+                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/inventory" element={<Inventory />} />
+                          <Route path="/sales" element={<Sales />} />
+                          <Route path="/shopkeepers" element={<ShopkeepersPage />} />
+                          <Route path="/reports" element={<ReportsPage />} />
+                          <Route path="/financial" element={<FinancialPage />} />
+                          <Route path="/services" element={<ServicesPage />} />
+                          <Route path="/about" element={<AboutPage />} />
+                          <Route path="/contact" element={<ContactPage />} />
+                          <Route path="/settings" element={<SettingsPage />} />
+                          <Route path="/expenses" element={<ExpensesPage />} />
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </Layout>
+                    </AuthWrapper>
+                  } />
+                </Routes>
+              </AnimatePresence>
             </BrowserRouter>
           </StoreProvider>
         </SettingsProvider>

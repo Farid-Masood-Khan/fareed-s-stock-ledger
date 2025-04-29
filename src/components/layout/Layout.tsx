@@ -82,7 +82,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -250, opacity: 0 }}
               transition={{ duration: animationsEnabled ? 0.3 : 0, ease: "easeInOut" }}
-              className={isMobile ? "fixed z-50" : ""}
+              className={`${isMobile ? "fixed z-40" : ""} shadow-lg`}
             >
               <Sidebar isOpen={true} />
             </motion.div>
@@ -97,7 +97,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black z-40"
+              className="fixed inset-0 bg-black z-30"
               onClick={() => setSidebarOpen(false)}
             />
           )}
