@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -125,13 +124,23 @@ const ServicesPage = () => {
     });
   };
 
+  // Fixed type issue with updateServiceStatus function
   const updateServiceStatus = (id: string, newStatus: RepairService["status"]) => {
     setServices(services.map(service => {
       if (service.id === id) {
-        const updatedService = { ...service, status: newStatus };
+        const updatedService = { 
+          ...service, 
+          status: newStatus 
+        };
+        
         if (newStatus === "Completed" && !service.dateCompleted) {
           updatedService.dateCompleted = new Date();
+          // Set final cost equal to estimated cost if not already set
+          if (!updatedService.finalCost) {
+            updatedService.finalCost = service.estimatedCost;
+          }
         }
+        
         return updatedService;
       }
       return service;
