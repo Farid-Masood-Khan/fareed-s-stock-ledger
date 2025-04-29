@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -332,12 +333,12 @@ const ServicesPage = () => {
           />
         </div>
 
-        <Select value={filterStatus || ""} onValueChange={(value) => setFilterStatus(value || undefined)}>
+        <Select value={filterStatus || "all"} onValueChange={(value) => setFilterStatus(value === "all" ? undefined : value)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Statuses</SelectItem>
+            <SelectItem value="all">All Statuses</SelectItem>
             <SelectItem value="Pending">Pending</SelectItem>
             <SelectItem value="In Progress">In Progress</SelectItem>
             <SelectItem value="Completed">Completed</SelectItem>
