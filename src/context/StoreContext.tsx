@@ -9,8 +9,8 @@ import {
   SalesReport,
   StockReport,
   FinancialSummary,
-  Customer,
 } from "../types";
+import { mockProducts, mockSales, mockShopkeepers, mockTransactions } from "../data/mockData";
 
 interface StoreContextType {
   // Data
@@ -18,7 +18,6 @@ interface StoreContextType {
   sales: Sale[];
   shopkeepers: Shopkeeper[];
   transactions: Transaction[];
-  customers: Customer[];
 
   // State management functions
   addProduct: (product: Omit<Product, "id" | "createdAt" | "updatedAt">) => void;
@@ -37,20 +36,10 @@ interface StoreContextType {
   updateTransaction: (transactionId: string, updates: Partial<Transaction>) => void;
   deleteTransaction: (transactionId: string) => void;
 
-  addCustomer: (customer: Omit<Customer, "id" | "createdAt" | "updatedAt">) => void;
-  updateCustomer: (customerId: string, updates: Partial<Customer>) => void;
-  deleteCustomer: (customerId: string) => void;
-
   // Reports
   generateSalesReport: (timeframe: ReportTimeframe, dateRange?: ReportDateRange) => SalesReport;
   generateStockReport: () => StockReport;
   generateFinancialSummary: () => FinancialSummary;
-
-  // Auth
-  login: (username: string, password: string) => boolean;
-  logout: () => void;
-  isLoggedIn: boolean;
-  username: string | null;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -68,38 +57,13 @@ interface StoreProviderProps {
 }
 
 export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [sales, setSales] = useState<Sale[]>([]);
-  const [shopkeepers, setShopkeepers] = useState<Shopkeeper[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  
-  // Authentication state
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(sessionStorage.getItem("isLoggedIn") === "true");
-  const [username, setUsername] = useState<string | null>(sessionStorage.getItem("username"));
+  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [sales, setSales] = useState<Sale[]>(mockSales);
+  const [shopkeepers, setShopkeepers] = useState<Shopkeeper[]>(mockShopkeepers);
+  const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
 
   // Generate a random ID
   const generateId = (): string => Math.random().toString(36).substring(2, 10);
-
-  // Authentication functions
-  const login = (username: string, password: string): boolean => {
-    // This is a simple authentication. In a real app, we would validate against a backend.
-    if (username === "subhancomputer" && password === "allahhuakbar786") {
-      sessionStorage.setItem("isLoggedIn", "true");
-      sessionStorage.setItem("username", username);
-      setIsLoggedIn(true);
-      setUsername(username);
-      return true;
-    }
-    return false;
-  };
-
-  const logout = () => {
-    sessionStorage.removeItem("isLoggedIn");
-    sessionStorage.removeItem("username");
-    setIsLoggedIn(false);
-    setUsername(null);
-  };
 
   // Product CRUD operations
   const addProduct = (product: Omit<Product, "id" | "createdAt" | "updatedAt">) => {
@@ -145,7 +109,7 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
     setSales((prevSales) => [...prevSales, newSale]);
 
     // If sale is to a shopkeeper, add transaction
-    if (sale.shopkeeperId && sale.shopkeeperId !== "none") {
+    if (sale.shopkeeperId) {
       addTransaction({
         shopkeeperId: sale.shopkeeperId,
         date: sale.date,
@@ -201,33 +165,6 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
   const deleteShopkeeper = (shopkeeperId: string) => {
     setShopkeepers((prevShopkeepers) =>
       prevShopkeepers.filter((shopkeeper) => shopkeeper.id !== shopkeeperId)
-    );
-  };
-
-  // Customer CRUD operations
-  const addCustomer = (customer: Omit<Customer, "id" | "createdAt" | "updatedAt">) => {
-    const newCustomer: Customer = {
-      ...customer,
-      id: generateId(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    setCustomers((prevCustomers) => [...prevCustomers, newCustomer]);
-  };
-
-  const updateCustomer = (customerId: string, updates: Partial<Customer>) => {
-    setCustomers((prevCustomers) =>
-      prevCustomers.map((customer) =>
-        customer.id === customerId
-          ? { ...customer, ...updates, updatedAt: new Date() }
-          : customer
-      )
-    );
-  };
-
-  const deleteCustomer = (customerId: string) => {
-    setCustomers((prevCustomers) =>
-      prevCustomers.filter((customer) => customer.id !== customerId)
     );
   };
 
@@ -429,7 +366,6 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
     sales,
     shopkeepers,
     transactions,
-    customers,
     addProduct,
     updateProduct,
     deleteProduct,
@@ -442,16 +378,9 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
     addTransaction,
     updateTransaction,
     deleteTransaction,
-    addCustomer,
-    updateCustomer,
-    deleteCustomer,
     generateSalesReport,
     generateStockReport,
     generateFinancialSummary,
-    login,
-    logout,
-    isLoggedIn,
-    username,
   };
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

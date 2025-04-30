@@ -1,164 +1,248 @@
 
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import {
-  LayoutDashboard,
-  Package,
-  ShoppingCart,
-  Users,
-  User,
-  BarChart3,
-  Wallet,
-  Settings,
-  LogOut,
-  Receipt,
-  Wrench,
-  Info,
-  PhoneCall,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { useStore } from "@/context/StoreContext";
+import React, { useEffect } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { Barcode, ChartBar, Receipt, Users, Wallet, FolderOpen, Settings, LogOut, FileText, Home, Laptop, Phone, Info, ShieldAlert } from "lucide-react";
+import { motion } from "framer-motion";
 import { useSettings } from "@/context/SettingsContext";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useToast } from "@/hooks/use-toast";
+import { useNotificationSound } from "@/hooks/use-notification-sound";
+import { Badge } from "@/components/ui/badge";
 
 interface SidebarProps {
   isOpen: boolean;
-  onClose: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  isOpen
+}) => {
+  const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useStore();
-  const { isDarkMode } = useSettings();
+  const { theme } = useSettings();
+  const isMobile = useIsMobile();
+  const { toast } = useToast();
+  const { playSound } = useNotificationSound();
+  const username = localStorage.getItem("username") || "User";
 
-  const isActive = (path: string) => location.pathname === path;
-
-  const sidebarItems = [
+  const navItems = [
     {
-      icon: <LayoutDashboard className="mr-3 h-5 w-5" />,
-      label: "Dashboard",
+      name: "Dashboard",
+      icon: <Home className="h-5 w-5" />,
       path: "/",
-    },
+      badge: null
+    }, 
     {
-      icon: <Package className="mr-3 h-5 w-5" />,
-      label: "Inventory",
+      name: "Inventory",
+      icon: <Barcode className="h-5 w-5" />,
       path: "/inventory",
-    },
+      badge: null
+    }, 
     {
-      icon: <ShoppingCart className="mr-3 h-5 w-5" />,
-      label: "Sales",
+      name: "Sales",
+      icon: <Receipt className="h-5 w-5" />,
       path: "/sales",
-    },
+      badge: {
+        text: "New",
+        variant: "success" as const
+      }
+    }, 
     {
-      icon: <Users className="mr-3 h-5 w-5" />,
-      label: "Shopkeepers",
+      name: "Shopkeepers",
+      icon: <Users className="h-5 w-5" />,
       path: "/shopkeepers",
-    },
+      badge: null
+    }, 
     {
-      icon: <User className="mr-3 h-5 w-5" />,
-      label: "Customers",
-      path: "/customers",
-    },
-    {
-      icon: <BarChart3 className="mr-3 h-5 w-5" />,
-      label: "Reports",
-      path: "/reports",
-    },
-    {
-      icon: <Wallet className="mr-3 h-5 w-5" />,
-      label: "Financial",
-      path: "/financial",
-    },
-    {
-      icon: <Receipt className="mr-3 h-5 w-5" />,
-      label: "Expenses",
+      name: "Expenses",
+      icon: <FileText className="h-5 w-5" />,
       path: "/expenses",
-    },
+      badge: null
+    }, 
     {
-      icon: <Wrench className="mr-3 h-5 w-5" />,
-      label: "Services",
+      name: "Reports",
+      icon: <FolderOpen className="h-5 w-5" />,
+      path: "/reports",
+      badge: null
+    }, 
+    {
+      name: "Financial",
+      icon: <Wallet className="h-5 w-5" />,
+      path: "/financial",
+      badge: null
+    }, 
+    {
+      name: "Services",
+      icon: <Laptop className="h-5 w-5" />,
       path: "/services",
+      badge: null
     },
     {
-      icon: <Info className="mr-3 h-5 w-5" />,
-      label: "About",
-      path: "/about",
-    },
-    {
-      icon: <PhoneCall className="mr-3 h-5 w-5" />,
-      label: "Contact",
+      name: "Contact",
+      icon: <Phone className="h-5 w-5" />,
       path: "/contact",
-    },
+      badge: null
+    }, 
     {
-      icon: <Settings className="mr-3 h-5 w-5" />,
-      label: "Settings",
+      name: "About",
+      icon: <Info className="h-5 w-5" />,
+      path: "/about",
+      badge: null
+    }, 
+    {
+      name: "Settings",
+      icon: <Settings className="h-5 w-5" />,
       path: "/settings",
-    },
+      badge: null
+    }
   ];
 
   const handleLogout = () => {
-    logout();
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("username");
+    playSound('alert');
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out"
+    });
+    navigate("/login");
+  };
+
+  useEffect(() => {
+    if (isMobile && isOpen) {
+      const currentPath = location.pathname;
+    }
+  }, [location, isMobile, isOpen]);
+
+  const sidebarVariants = {
+    open: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 24
+      }
+    },
+    closed: {
+      x: -20,
+      opacity: 0,
+      transition: {
+        duration: 0.2
+      }
+    }
   };
 
   return (
-    <div
-      className={cn(
-        "z-30 fixed inset-y-0 left-0 w-64 transform transition-transform duration-200 ease-in-out",
-        {
-          "translate-x-0": isOpen,
-          "-translate-x-full": !isOpen,
-        }
-      )}
-    >
-      <div
-        className={cn(
-          "flex h-full flex-col overflow-hidden shadow-lg",
-          isDarkMode
-            ? "bg-zinc-950 border-r border-zinc-800"
-            : "bg-white border-r"
-        )}
-      >
-        <div className="p-4 flex items-center">
-          <h2 className="text-lg font-semibold">Stock Ledger</h2>
+    <aside className={`fixed left-0 top-14 h-full transition-all duration-300 ${
+      theme === 'dark' 
+        ? 'bg-gradient-to-b from-gray-900 to-gray-800 border-r border-gray-800' 
+        : 'bg-gradient-to-b from-white to-gray-50 border-r border-gray-200'
+      } shadow-lg ${isOpen ? "w-64" : "w-0"}`}>
+      <div className="h-full flex flex-col overflow-y-auto scrollbar-custom">
+        {/* User profile at top */}
+        <div className={`p-4 ${theme === 'dark' ? 'bg-gray-800/50' : 'bg-gray-50/80'} border-b ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className="flex items-center space-x-3">
+            <div className={`h-10 w-10 rounded-full flex items-center justify-center ${theme === 'dark' ? 'bg-gray-700' : 'bg-brand-100'} text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-brand-700'}`}>
+              {username.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <p className="font-medium leading-none">{username}</p>
+              <p className="text-xs text-muted-foreground">Administrator</p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Navigation menu */}
+        <nav className="mt-4 px-2 flex-1">
+          <motion.ul 
+            initial="closed"
+            animate="open"
+            variants={{
+              open: {
+                transition: { staggerChildren: 0.07, delayChildren: 0.2 }
+              },
+              closed: {
+                transition: { staggerChildren: 0.05, staggerDirection: -1 }
+              }
+            }}
+            className="space-y-1"
+          >
+            {navItems.map((item, index) => (
+              <motion.li 
+                key={item.name} 
+                variants={sidebarVariants}
+                whileHover={{
+                  scale: 1.02,
+                  transition: { duration: 0.2 }
+                }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <NavLink 
+                  to={item.path} 
+                  className={({isActive}) => `
+                    flex items-center justify-between px-4 py-3 rounded-md transition-all
+                    ${isActive 
+                      ? theme === 'dark' 
+                        ? "bg-gray-800 text-brand-400 font-semibold" 
+                        : "bg-brand-50 text-brand-800 font-semibold border border-brand-200" 
+                      : theme === 'dark' 
+                        ? "hover:bg-gray-800 text-gray-300" 
+                        : "hover:bg-gray-100 text-gray-700"
+                    }
+                  `}
+                >
+                  <div className="flex items-center">
+                    <span className={`mr-3 ${location.pathname === item.path ? 'text-brand-500' : ''}`}>
+                      {item.icon}
+                    </span>
+                    <span>{item.name}</span>
+                  </div>
+                  
+                  {item.badge && (
+                    <Badge 
+                      variant={item.badge.variant === "success" ? "default" : "outline"} 
+                      className={
+                        item.badge.variant === "success" 
+                          ? "bg-green-500 hover:bg-green-600 text-xs" 
+                          : "text-xs"
+                      }
+                    >
+                      {item.badge.text}
+                    </Badge>
+                  )}
+                </NavLink>
+              </motion.li>
+            ))}
+          </motion.ul>
+        </nav>
+
+        {/* Security alert */}
+        <div className={`mx-3 mb-4 p-3 rounded-md ${theme === 'dark' ? 'bg-gray-800' : 'bg-brand-50'} border ${theme === 'dark' ? 'border-gray-700' : 'border-brand-200'}`}>
+          <div className="flex items-start space-x-3">
+            <ShieldAlert className={`h-5 w-5 ${theme === 'dark' ? 'text-brand-400' : 'text-brand-600'} mt-0.5`} />
+            <div>
+              <p className="text-sm font-medium">Daily Backup</p>
+              <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-muted-foreground'}`}>
+                Last backup: {new Date().toLocaleDateString()}
+              </p>
+            </div>
+          </div>
         </div>
 
-        <Separator />
-
-        <ScrollArea className="flex-1 pt-3">
-          <nav className="space-y-1 px-2">
-            {sidebarItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={onClose}
-                className={cn(
-                  "group flex items-center px-3 py-2 text-base font-medium rounded-md transition-colors",
-                  isActive(item.path)
-                    ? "bg-primary text-primary-foreground"
-                    : "text-foreground hover:bg-muted"
-                )}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            ))}
-          </nav>
-        </ScrollArea>
-
-        <div className="p-4">
-          <Button
-            variant="outline"
-            className="w-full flex items-center justify-center"
-            onClick={handleLogout}
+        {/* Logout button */}
+        <div className={`p-4 border-t ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
+          <motion.button 
+            onClick={handleLogout} 
+            className={`flex w-full items-center px-4 py-3 text-gray-700 rounded-md transition-all ${theme === 'dark' ? "hover:bg-gray-800 text-gray-300" : "hover:bg-gray-100"}`}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <LogOut className="h-5 w-5 mr-2" />
-            Logout
-          </Button>
+            <LogOut className="h-5 w-5 mr-3 text-red-500" />
+            <span>Logout</span>
+          </motion.button>
         </div>
       </div>
-    </div>
+    </aside>
   );
 };
 

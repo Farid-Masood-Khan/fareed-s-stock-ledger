@@ -179,7 +179,7 @@ const Sales = () => {
       items: saleItems,
       total: calculateTotal(),
       paymentMethod: newSale.paymentMethod,
-      shopkeeperId: newSale.shopkeeperId && newSale.shopkeeperId !== "" ? newSale.shopkeeperId : undefined,
+      shopkeeperId: newSale.shopkeeperId || undefined,
       notes: newSale.notes,
     };
 
@@ -457,14 +457,14 @@ const Sales = () => {
                   <div className="space-y-2">
                     <Label htmlFor="shopkeeper">Shopkeeper (Optional)</Label>
                     <Select 
-                      value={newSale.shopkeeperId} 
-                      onValueChange={(value) => setNewSale({...newSale, shopkeeperId: value})}
+                      value={newSale.shopkeeperId || ""} 
+                      onValueChange={(value) => setNewSale({...newSale, shopkeeperId: value || undefined})}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select shopkeeper" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="none">None (Direct Sale)</SelectItem>
+                        <SelectItem value="">None (Direct Sale)</SelectItem>
                         {shopkeepers.map(shopkeeper => (
                           <SelectItem key={shopkeeper.id} value={shopkeeper.id}>
                             {shopkeeper.name}
