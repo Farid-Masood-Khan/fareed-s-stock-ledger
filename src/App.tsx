@@ -38,23 +38,27 @@ const queryClient = new QueryClient({
       },
       refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000, // 5 minutes
-      // Global error handler for queries
-      onError: (error: any) => {
-        console.error("Query error:", error);
-        // Avoid logging sensitive information
-        const safeErrorMessage = error?.message || "An error occurred";
-        
-        // Handle unauthorized errors by redirecting to login
-        if (error?.response?.status === 401) {
-          sessionStorage.removeItem("isLoggedIn");
-          window.location.href = "/login";
+      // Global error handler using meta for newer versions of react-query
+      meta: {
+        onError: (error: any) => {
+          console.error("Query error:", error);
+          // Avoid logging sensitive information
+          const safeErrorMessage = error?.message || "An error occurred";
+          
+          // Handle unauthorized errors by redirecting to login
+          if (error?.response?.status === 401) {
+            sessionStorage.removeItem("isLoggedIn");
+            window.location.href = "/login";
+          }
         }
       }
     },
     mutations: {
-      // Global error handler for mutations
-      onError: (error: any) => {
-        console.error("Mutation error:", error);
+      // Use meta for mutation error handling in newer versions
+      meta: {
+        onError: (error: any) => {
+          console.error("Mutation error:", error);
+        }
       }
     }
   },
