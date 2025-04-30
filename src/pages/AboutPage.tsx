@@ -1,37 +1,34 @@
-
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Laptop, Phone, Mail, Globe, Map, User } from "lucide-react";
-
 const AboutPage = () => {
   const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
+    hidden: {
+      opacity: 0
+    },
+    visible: {
       opacity: 1,
-      transition: { 
+      transition: {
         staggerChildren: 0.2,
         duration: 0.5
       }
     }
   };
-
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
+    hidden: {
+      y: 20,
+      opacity: 0
+    },
+    visible: {
+      y: 0,
       opacity: 1,
-      transition: { duration: 0.5 }
+      transition: {
+        duration: 0.5
+      }
     }
   };
-
-  return (
-    <motion.div 
-      className="space-y-8"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+  return <motion.div className="space-y-8" variants={containerVariants} initial="hidden" animate="visible">
       <motion.div variants={itemVariants}>
         <h1 className="text-3xl font-bold mb-6">About Us</h1>
       </motion.div>
@@ -60,7 +57,7 @@ const AboutPage = () => {
               <div>
                 <h3 className="font-semibold">Contact Numbers</h3>
                 <p>0315-2656365</p>
-                <p>03095171140</p>
+                <p>0309-5171140</p>
               </div>
             </div>
 
@@ -178,8 +175,6 @@ const AboutPage = () => {
           </CardContent>
         </Card>
       </motion.div>
-    </motion.div>
-  );
+    </motion.div>;
 };
-
 export default AboutPage;
