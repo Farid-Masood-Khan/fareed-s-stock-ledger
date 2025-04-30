@@ -22,15 +22,41 @@ import { StoreProvider } from "./context/StoreContext";
 import { SettingsProvider } from "./context/SettingsContext";
 import AuthWrapper from "./components/auth/AuthWrapper";
 import { LazyMotion, domAnimation, AnimatePresence } from "framer-motion";
+import { useToast } from "./hooks/use-toast";
 
-// Create a new QueryClient with better error handling
+// Create a new QueryClient with better error handling and security
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
+      retry: (failureCount, error: any) => {
+        // Don't retry on 401/403 errors (unauthorized/forbidden)
+        if (error?.response?.status === 401 || error?.response?.status === 403) {
+          return false;
+        }
+        // Retry a maximum of 1 time for other errors
+        return failureCount < 1;
+      },
       refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000, // 5 minutes
+      // Global error handler for queries
+      onError: (error: any) => {
+        console.error("Query error:", error);
+        // Avoid logging sensitive information
+        const safeErrorMessage = error?.message || "An error occurred";
+        
+        // Handle unauthorized errors by redirecting to login
+        if (error?.response?.status === 401) {
+          sessionStorage.removeItem("isLoggedIn");
+          window.location.href = "/login";
+        }
+      }
     },
+    mutations: {
+      // Global error handler for mutations
+      onError: (error: any) => {
+        console.error("Mutation error:", error);
+      }
+    }
   },
 });
 
