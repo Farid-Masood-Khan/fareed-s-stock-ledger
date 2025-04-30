@@ -21,6 +21,7 @@ export interface Sale {
   total: number;
   paymentMethod: string;
   shopkeeperId?: string; // Optional, if sale is to a shopkeeper
+  customerId?: string; // Optional, if sale is to a specific customer
   notes?: string;
 }
 
@@ -42,6 +43,18 @@ export interface Shopkeeper {
   address?: string;
   balance: number; // Negative means they owe you, positive means you owe them
   createdAt: Date;
+}
+
+// Customer represents an individual customer
+export interface Customer {
+  id: string;
+  name: string;
+  contact?: string;
+  cnic?: string;
+  email?: string;
+  address?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Transaction represents a transaction with a shopkeeper

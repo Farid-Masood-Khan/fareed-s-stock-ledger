@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Inventory from "./pages/Inventory";
 import Sales from "./pages/Sales";
 import ShopkeepersPage from "./pages/ShopkeepersPage";
+import CustomersPage from "./pages/CustomersPage";
 import ReportsPage from "./pages/ReportsPage";
 import FinancialPage from "./pages/FinancialPage";
 import SettingsPage from "./pages/SettingsPage";
@@ -22,7 +23,6 @@ import { StoreProvider } from "./context/StoreContext";
 import { SettingsProvider } from "./context/SettingsContext";
 import AuthWrapper from "./components/auth/AuthWrapper";
 import { LazyMotion, domAnimation, AnimatePresence } from "framer-motion";
-import { useToast } from "./hooks/use-toast";
 
 // Create a new QueryClient with better error handling and security
 const queryClient = new QueryClient({
@@ -84,6 +84,7 @@ const App = () => (
                           <Route path="/inventory" element={<Inventory />} />
                           <Route path="/sales" element={<Sales />} />
                           <Route path="/shopkeepers" element={<ShopkeepersPage />} />
+                          <Route path="/customers" element={<CustomersPage />} />
                           <Route path="/reports" element={<ReportsPage />} />
                           <Route path="/financial" element={<FinancialPage />} />
                           <Route path="/services" element={<ServicesPage />} />

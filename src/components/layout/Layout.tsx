@@ -1,134 +1,67 @@
 
-import React, { useEffect, useState } from "react";
-import { Toaster } from "@/components/ui/toaster";
+import React, { useState } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 import { useSettings } from "@/context/SettingsContext";
-import { motion, AnimatePresence } from "framer-motion";
-import { useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const isMobile = useIsMobile();
-  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
-  const { theme, animationsEnabled } = useSettings();
-  const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { isDarkMode } = useSettings();
 
-  useEffect(() => {
-    // Apply theme class
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  }, [theme]);
-
-  // Close sidebar on mobile when route changes
-  useEffect(() => {
-    if (isMobile) {
-      setSidebarOpen(false);
-    } else {
-      // On desktop, restore sidebar state
-      setSidebarOpen(true);
-    }
-  }, [isMobile, location.pathname]);
-
-  // Handle click outside sidebar to close it on mobile
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (!isMobile) return;
-      const sidebarElement = document.getElementById('sidebar');
-      const targetElement = e.target as HTMLElement;
-      
-      if (sidebarElement && 
-          sidebarOpen && 
-          !sidebarElement.contains(targetElement) && 
-          !targetElement.closest('button[aria-label="Toggle sidebar"]')) {
-        setSidebarOpen(false);
-      }
-    };
-
-    if (isMobile && sidebarOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
-    };
-  }, [isMobile, sidebarOpen]);
-
-  const mainContentVariants = {
-    expanded: { marginLeft: isMobile ? 0 : "16rem" },
-    collapsed: { marginLeft: 0 }
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const pageTransitionVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-    exit: { opacity: 0, y: -20, transition: { duration: 0.2 } }
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
   };
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900 text-gray-100' : 'bg-gray-50 text-gray-900'}`}>
-      <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-      <div className="flex relative">
-        <AnimatePresence>
-          {sidebarOpen && (
+    <div
+      className={cn(
+        "flex h-screen relative overflow-hidden",
+        isDarkMode ? "bg-zinc-950 text-zinc-50" : "bg-gray-50 text-gray-900"
+      )}
+    >
+      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
+
+      <div
+        className={cn(
+          "flex flex-col flex-1 w-full transition-all duration-200 ease-in-out",
+          isSidebarOpen ? "md:ml-64" : "ml-0"
+        )}
+      >
+        <div className="fixed top-0 left-0 right-0 z-20">
+          <Navbar onMenuClick={toggleSidebar} sidebarOpen={isSidebarOpen} />
+        </div>
+
+        <main className="flex-1 pt-16 overflow-y-auto">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6">
             <motion.div
-              id="sidebar"
-              initial={{ x: -250, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -250, opacity: 0 }}
-              transition={{ duration: animationsEnabled ? 0.3 : 0, ease: "easeInOut" }}
-              className={`${isMobile ? "fixed z-40" : ""} shadow-lg`}
-            >
-              <Sidebar isOpen={true} />
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
-        {/* Mobile overlay when sidebar is open */}
-        <AnimatePresence>
-          {isMobile && sidebarOpen && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black z-30"
-              onClick={() => setSidebarOpen(false)}
-            />
-          )}
-        </AnimatePresence>
-        
-        <motion.main
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: 1,
-            marginLeft: animationsEnabled ? (sidebarOpen && !isMobile ? "16rem" : 0) : (sidebarOpen && !isMobile ? "16rem" : 0)
-          }}
-          transition={{ duration: animationsEnabled ? 0.5 : 0 }}
-          className={`flex-1 p-4 md:p-6 transition-all duration-300 ${
-            sidebarOpen && !isMobile ? "ml-64" : ""
-          } w-full max-w-full`}
-        >
-          <AnimatePresence mode="wait">
-            <motion.div 
-              key={location.pathname}
-              variants={pageTransitionVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="w-full"
             >
               {children}
             </motion.div>
-          </AnimatePresence>
-        </motion.main>
+          </div>
+        </main>
       </div>
-      <Toaster />
+
+      {/* Overlay for mobile */}
+      {isSidebarOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-20"
+          onClick={closeSidebar}
+        />
+      )}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 
 import React, { useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import { useStore } from "@/context/StoreContext";
 
 interface AuthWrapperProps {
   children: React.ReactNode;
@@ -8,7 +9,7 @@ interface AuthWrapperProps {
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   const location = useLocation();
-  const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
+  const { isLoggedIn } = useStore();
 
   // If user is not logged in and not on login page, redirect to login
   if (!isLoggedIn && location.pathname !== "/login") {
