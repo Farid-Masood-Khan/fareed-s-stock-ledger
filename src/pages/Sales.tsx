@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useStore } from "@/context/StoreContext";
 import { formatCurrency, formatDateTime, generateInvoiceNumber } from "@/utils/formatters";
@@ -537,7 +538,7 @@ const Sales = () => {
                   <div className="space-y-2">
                     <Label htmlFor="customer">Customer Type</Label>
                     <Select
-                      value={newSale.isNewCustomer ? "new" : "shopkeeper"}
+                      value={newSale.isNewCustomer ? "new" : (newSale.customerId ? "existing" : (newSale.shopkeeperId ? "shopkeeper" : "direct"))}
                       onValueChange={(value) => {
                         setNewSale({
                           ...newSale, 
@@ -884,4 +885,122 @@ const Sales = () => {
                                             <thead>
                                               <tr className="bg-muted/50">
                                                 <th className="text-left p-2">Product</th>
-                                                <th
+                                                <th className="text-right p-2">Price</th>
+                                                <th className="text-right p-2">Qty</th>
+                                                <th className="text-right p-2">Total</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {viewSale.items.map((item, index) => (
+                                                <tr key={index} className="border-t">
+                                                  <td className="p-2">
+                                                    <div>{item.productName}</div>
+                                                    <div className="text-xs text-muted-foreground">{item.productCode}</div>
+                                                  </td>
+                                                  <td className="p-2 text-right">{formatCurrency(item.price)}</td>
+                                                  <td className="p-2 text-right">{item.quantity}</td>
+                                                  <td className="p-2 text-right">{formatCurrency(item.total)}</td>
+                                                </tr>
+                                              ))}
+                                              <tr className="border-t bg-muted/30">
+                                                <td colSpan={3} className="p-2 text-right font-medium">Total:</td>
+                                                <td className="p-2 text-right font-bold">{formatCurrency(viewSale.total)}</td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  )}
+                                </DialogContent>
+                              </Dialog>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center pt-4">
+                  <Pagination>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(page => Math.max(page - 1, 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </Button>
+                    <div className="flex items-center gap-1 mx-4">
+                      {Array.from({length: Math.min(5, totalPages)}).map((_, i) => {
+                        // Show a window of 5 pages around current page
+                        let pageNum = i + 1;
+                        if (totalPages > 5) {
+                          if (currentPage > 3) {
+                            pageNum = currentPage - 3 + i;
+                          }
+                          if (currentPage > totalPages - 2) {
+                            pageNum = totalPages - 5 + i + 1;
+                          }
+                        }
+                        
+                        if (pageNum <= totalPages) {
+                          return (
+                            <Button 
+                              key={i} 
+                              variant={currentPage === pageNum ? "default" : "outline"}
+                              size="sm"
+                              className="w-8 h-8 p-0"
+                              onClick={() => setCurrentPage(pageNum)}
+                            >
+                              {pageNum}
+                            </Button>
+                          );
+                        }
+                        return null;
+                      })}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(page => Math.min(page + 1, totalPages))}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                    </Button>
+                  </Pagination>
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Delete Sale Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Sale</DialogTitle>
+          </DialogHeader>
+          <p className="py-4">
+            Are you sure you want to delete this sale? This action cannot be undone.
+          </p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteSale}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default Sales;

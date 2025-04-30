@@ -45,13 +45,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {/* Main content area */}
         <div className="flex-1 flex flex-col h-full overflow-hidden">
           {/* Fixed top navbar */}
-          <Navbar 
-            sidebarOpen={sidebarOpen}
-            toggleSidebar={toggleSidebar} 
-          />
+          <div className="fixed top-0 left-0 right-0 z-10">
+            <Navbar 
+              sidebarOpen={sidebarOpen}
+              toggleSidebar={toggleSidebar} 
+            />
+          </div>
           
-          {/* Main content with scroll */}
-          <main className="flex-1 overflow-auto p-4 md:p-6 pt-20">
+          {/* Main content with scroll - adjust padding-top to account for fixed navbar */}
+          <main className="flex-1 overflow-auto p-4 md:p-6 pt-20 mt-4">
             <div className="mx-auto max-w-7xl">
               {children}
             </div>
