@@ -1,121 +1,67 @@
 
-import React, { createContext, useState, useContext, useEffect, ReactNode } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 
-type Theme = "light" | "dark";
-type FontSize = "small" | "medium" | "large";
+interface Settings {
+  theme: "light" | "dark";
+  language: string;
+  currency: string;
+  isMoneyHidden: boolean;
+  companyName?: string;
+  companyLogo?: string;
+  companyAddress?: string;
+  companyPhone?: string;
+  companyEmail?: string;
+  lowStockThreshold: number;
+}
 
 interface SettingsContextType {
-  theme: Theme;
-  fontSize: FontSize;
-  toggleTheme: () => void;
-  setFontSize: (size: FontSize) => void;
-  isMoneyHidden: boolean;
-  toggleMoneyVisibility: () => void;
-  soundEnabled: boolean;
-  toggleSoundEnabled: () => void;
-  animationsEnabled: boolean;
-  toggleAnimationsEnabled: () => void;
+  settings: Settings | null;
+  updateSetting: <K extends keyof Settings>(key: K, value: Settings[K]) => void;
 }
 
-const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
-
-export const useSettings = () => {
-  const context = useContext(SettingsContext);
-  if (context === undefined) {
-    throw new Error("useSettings must be used within a SettingsProvider");
-  }
-  return context;
+const defaultSettings: Settings = {
+  theme: "light",
+  language: "en",
+  currency: "PKR",
+  isMoneyHidden: false,
+  companyName: "Subhan Computer",
+  companyAddress: "Your Address, City, Country",
+  companyPhone: "+92-000-0000000",
+  companyEmail: "info@example.com",
+  lowStockThreshold: 5,
 };
 
-interface SettingsProviderProps {
-  children: ReactNode;
-}
+const SettingsContext = createContext<SettingsContextType>({
+  settings: defaultSettings,
+  updateSetting: () => {},
+});
 
-const getInitialTheme = (): Theme => {
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "light" || savedTheme === "dark") {
-    return savedTheme;
-  }
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-};
+export const useSettings = () => useContext(SettingsContext);
 
-export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
-  const [fontSize, setFontSize] = useState<FontSize>(() => {
-    const savedFontSize = localStorage.getItem("fontSize");
-    if (savedFontSize === "small" || savedFontSize === "medium" || savedFontSize === "large") {
-      return savedFontSize;
-    }
-    return "medium";
-  });
-  const [isMoneyHidden, setIsMoneyHidden] = useState<boolean>(() => {
-    return localStorage.getItem("hideMoneyDetails") === "true";
-  });
-  const [soundEnabled, setSoundEnabled] = useState<boolean>(() => {
-    return localStorage.getItem("soundEnabled") !== "false"; // Default to true
-  });
-  const [animationsEnabled, setAnimationsEnabled] = useState<boolean>(() => {
-    return localStorage.getItem("animationsEnabled") !== "false"; // Default to true
+export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [settings, setSettings] = useState<Settings>(() => {
+    const savedSettings = localStorage.getItem("settings");
+    return savedSettings ? JSON.parse(savedSettings) : defaultSettings;
   });
 
   useEffect(() => {
-    localStorage.setItem("theme", theme);
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }, [theme]);
-
-  useEffect(() => {
-    localStorage.setItem("fontSize", fontSize);
-    const fontSizeClass = {
-      small: "text-sm",
-      medium: "text-base",
-      large: "text-lg",
-    };
+    localStorage.setItem("settings", JSON.stringify(settings));
     
-    document.documentElement.classList.remove("text-sm", "text-base", "text-lg");
-    document.documentElement.classList.add(fontSizeClass[fontSize]);
-  }, [fontSize]);
+    // Apply theme to the body
+    if (settings.theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [settings]);
 
-  useEffect(() => {
-    localStorage.setItem("hideMoneyDetails", isMoneyHidden.toString());
-  }, [isMoneyHidden]);
-
-  useEffect(() => {
-    localStorage.setItem("soundEnabled", soundEnabled.toString());
-  }, [soundEnabled]);
-
-  useEffect(() => {
-    localStorage.setItem("animationsEnabled", animationsEnabled.toString());
-    document.documentElement.classList.toggle("reduce-motion", !animationsEnabled);
-  }, [animationsEnabled]);
-
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  const updateSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => {
+    setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
-  const toggleMoneyVisibility = () => {
-    setIsMoneyHidden((prev) => !prev);
-  };
-
-  const toggleSoundEnabled = () => {
-    setSoundEnabled((prev) => !prev);
-  };
-
-  const toggleAnimationsEnabled = () => {
-    setAnimationsEnabled((prev) => !prev);
-  };
-
-  const value = {
-    theme,
-    fontSize,
-    toggleTheme,
-    setFontSize,
-    isMoneyHidden,
-    toggleMoneyVisibility,
-    soundEnabled,
-    toggleSoundEnabled,
-    animationsEnabled,
-    toggleAnimationsEnabled,
-  };
-
-  return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
+  return (
+    <SettingsContext.Provider value={{ settings, updateSetting }}>
+      {children}
+    </SettingsContext.Provider>
+  );
 };

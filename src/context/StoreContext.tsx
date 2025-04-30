@@ -1,14 +1,16 @@
-import React, { createContext, useState, useContext, ReactNode } from "react";
+import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import {
   Product,
   Sale,
   Shopkeeper,
   Transaction,
+  Customer,
   ReportTimeframe,
   ReportDateRange,
   SalesReport,
   StockReport,
   FinancialSummary,
+  User,
 } from "../types";
 import { mockProducts, mockSales, mockShopkeepers, mockTransactions } from "../data/mockData";
 
@@ -18,6 +20,8 @@ interface StoreContextType {
   sales: Sale[];
   shopkeepers: Shopkeeper[];
   transactions: Transaction[];
+  customers?: Customer[];
+  currentUser?: User | null;
 
   // State management functions
   addProduct: (product: Omit<Product, "id" | "createdAt" | "updatedAt">) => void;
@@ -36,10 +40,20 @@ interface StoreContextType {
   updateTransaction: (transactionId: string, updates: Partial<Transaction>) => void;
   deleteTransaction: (transactionId: string) => void;
 
+  addCustomer: (customer: Omit<Customer, "id" | "createdAt" | "updatedAt">) => Customer;
+  updateCustomer: (customerId: string, updates: Partial<Customer>) => void;
+  deleteCustomer: (customerId: string) => void;
+  
+  login: (username: string, password: string) => boolean;
+  logout: () => void;
+
   // Reports
   generateSalesReport: (timeframe: ReportTimeframe, dateRange?: ReportDateRange) => SalesReport;
   generateStockReport: () => StockReport;
   generateFinancialSummary: () => FinancialSummary;
+  
+  // Init utility
+  clearMockData: () => void;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -56,14 +70,88 @@ interface StoreProviderProps {
   children: ReactNode;
 }
 
+// Default admin user
+const DEFAULT_USER: User = {
+  id: "default-admin",
+  username: "subhancomputer",
+  role: "admin",
+  createdAt: new Date(),
+};
+
+// Default password (should be hashed in a real app)
+const DEFAULT_PASSWORD = "allahhuakbar786";
+
 export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
-  const [sales, setSales] = useState<Sale[]>(mockSales);
-  const [shopkeepers, setShopkeepers] = useState<Shopkeeper[]>(mockShopkeepers);
-  const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
+  const [products, setProducts] = useState<Product[]>(() => {
+    const savedProducts = localStorage.getItem("products");
+    return savedProducts ? JSON.parse(savedProducts, dateReviver) : mockProducts;
+  });
+  
+  const [sales, setSales] = useState<Sale[]>(() => {
+    const savedSales = localStorage.getItem("sales");
+    return savedSales ? JSON.parse(savedSales, dateReviver) : mockSales;
+  });
+  
+  const [shopkeepers, setShopkeepers] = useState<Shopkeeper[]>(() => {
+    const savedShopkeepers = localStorage.getItem("shopkeepers");
+    return savedShopkeepers ? JSON.parse(savedShopkeepers, dateReviver) : mockShopkeepers;
+  });
+  
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    const savedTransactions = localStorage.getItem("transactions");
+    return savedTransactions ? JSON.parse(savedTransactions, dateReviver) : mockTransactions;
+  });
+  
+  const [customers, setCustomers] = useState<Customer[]>(() => {
+    const savedCustomers = localStorage.getItem("customers");
+    return savedCustomers ? JSON.parse(savedCustomers, dateReviver) : [];
+  });
+  
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    const savedUser = localStorage.getItem("currentUser");
+    return savedUser ? JSON.parse(savedUser, dateReviver) : null;
+  });
+
+  // Helper function to convert date strings to Date objects when parsing JSON
+  function dateReviver(key: string, value: any) {
+    if (typeof value === 'string') {
+      // Check if the string is a date format
+      const dateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
+      if (dateRegex.test(value)) {
+        return new Date(value);
+      }
+    }
+    return value;
+  }
+
+  // Save data to localStorage whenever state changes
+  useEffect(() => {
+    localStorage.setItem("products", JSON.stringify(products));
+    localStorage.setItem("sales", JSON.stringify(sales));
+    localStorage.setItem("shopkeepers", JSON.stringify(shopkeepers));
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+    localStorage.setItem("customers", JSON.stringify(customers));
+    if (currentUser) {
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    }
+  }, [products, sales, shopkeepers, transactions, customers, currentUser]);
 
   // Generate a random ID
   const generateId = (): string => Math.random().toString(36).substring(2, 10);
+
+  // Authentication functions
+  const login = (username: string, password: string): boolean => {
+    if (username === DEFAULT_USER.username && password === DEFAULT_PASSWORD) {
+      setCurrentUser(DEFAULT_USER);
+      return true;
+    }
+    return false;
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem("currentUser");
+  };
 
   // Product CRUD operations
   const addProduct = (product: Omit<Product, "id" | "createdAt" | "updatedAt">) => {
@@ -89,6 +177,34 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
   const deleteProduct = (productId: string) => {
     setProducts((prevProducts) =>
       prevProducts.filter((product) => product.id !== productId)
+    );
+  };
+
+  // Customer CRUD operations
+  const addCustomer = (customer: Omit<Customer, "id" | "createdAt" | "updatedAt">): Customer => {
+    const newCustomer: Customer = {
+      ...customer,
+      id: generateId(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    setCustomers((prevCustomers) => [...prevCustomers, newCustomer]);
+    return newCustomer;
+  };
+
+  const updateCustomer = (customerId: string, updates: Partial<Customer>) => {
+    setCustomers((prevCustomers) =>
+      prevCustomers.map((customer) =>
+        customer.id === customerId
+          ? { ...customer, ...updates, updatedAt: new Date() }
+          : customer
+      )
+    );
+  };
+
+  const deleteCustomer = (customerId: string) => {
+    setCustomers((prevCustomers) =>
+      prevCustomers.filter((customer) => customer.id !== customerId)
     );
   };
 
@@ -139,6 +255,42 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
   };
 
   const deleteSale = (saleId: string) => {
+    // Get the sale before deleting
+    const saleToDelete = sales.find(s => s.id === saleId);
+    
+    if (saleToDelete) {
+      // Return items to inventory
+      saleToDelete.items.forEach(item => {
+        const product = products.find(p => p.id === item.productId);
+        if (product) {
+          updateProduct(item.productId, {
+            quantity: product.quantity + item.quantity
+          });
+        }
+      });
+      
+      // If sale was to a shopkeeper, adjust balance and remove transaction
+      if (saleToDelete.shopkeeperId) {
+        const relatedTransaction = transactions.find(
+          t => t.type === "SALE" && t.shopkeeperId === saleToDelete.shopkeeperId && 
+              t.notes?.includes(saleToDelete.invoiceNumber)
+        );
+        
+        if (relatedTransaction) {
+          deleteTransaction(relatedTransaction.id);
+        }
+        
+        // Adjust shopkeeper balance
+        setShopkeepers((prevShopkeepers) =>
+          prevShopkeepers.map((shopkeeper) =>
+            shopkeeper.id === saleToDelete.shopkeeperId
+              ? { ...shopkeeper, balance: shopkeeper.balance + saleToDelete.total }
+              : shopkeeper
+          )
+        );
+      }
+    }
+    
     setSales((prevSales) => prevSales.filter((sale) => sale.id !== saleId));
   };
 
@@ -360,12 +512,29 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
       netBalance,
     };
   };
+  
+  // Clear all mock data
+  const clearMockData = () => {
+    setProducts([]);
+    setSales([]);
+    setShopkeepers([]);
+    setTransactions([]);
+    setCustomers([]);
+    
+    localStorage.removeItem("products");
+    localStorage.removeItem("sales");
+    localStorage.removeItem("shopkeepers");
+    localStorage.removeItem("transactions");
+    localStorage.removeItem("customers");
+  };
 
   const value: StoreContextType = {
     products,
     sales,
     shopkeepers,
     transactions,
+    customers,
+    currentUser,
     addProduct,
     updateProduct,
     deleteProduct,
@@ -378,9 +547,15 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({ children }) => {
     addTransaction,
     updateTransaction,
     deleteTransaction,
+    addCustomer,
+    updateCustomer,
+    deleteCustomer,
+    login,
+    logout,
     generateSalesReport,
     generateStockReport,
     generateFinancialSummary,
+    clearMockData,
   };
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

@@ -21,6 +21,7 @@ export interface Sale {
   total: number;
   paymentMethod: string;
   shopkeeperId?: string; // Optional, if sale is to a shopkeeper
+  customerId?: string;   // Optional, if sale is to a customer
   notes?: string;
 }
 
@@ -32,6 +33,17 @@ export interface SaleItem {
   quantity: number;
   price: number;
   total: number;
+}
+
+// Customer represents a regular customer
+export interface Customer {
+  id: string;
+  name: string;
+  contact?: string;
+  cnic?: string;
+  email?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Shopkeeper represents a business partner
@@ -91,4 +103,13 @@ export interface FinancialSummary {
   totalDueFromShopkeepers: number;
   totalDueToShopkeepers: number;
   netBalance: number;
+}
+
+// User represents an authenticated user of the system
+export interface User {
+  id: string;
+  username: string;
+  email?: string;
+  role: "admin" | "staff";
+  createdAt: Date;
 }
