@@ -107,7 +107,7 @@ const AboutPage = () => {
               <Phone className="h-5 w-5 mr-2 text-brand-500 mt-0.5" />
               <div>
                 <h3 className="font-semibold">Contact</h3>
-                <p>+92 302 6673 322</p>
+                <p>+92-3026673322</p>
               </div>
             </div>
 
