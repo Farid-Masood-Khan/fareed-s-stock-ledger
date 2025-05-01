@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Moon, Sun, Type, Volume2, VolumeX, Zap, ZapOff, Save, Share2, Palette, RotateCcw } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -13,24 +12,25 @@ import { motion } from "framer-motion";
 import { useNotificationSound } from "@/hooks/use-notification-sound";
 import { useToast } from "@/hooks/use-toast";
 import { Slider } from "@/components/ui/slider";
-
 const SettingsPage = () => {
-  const { 
-    theme, 
-    toggleTheme, 
-    fontSize, 
-    setFontSize, 
-    isMoneyHidden, 
+  const {
+    theme,
+    toggleTheme,
+    fontSize,
+    setFontSize,
+    isMoneyHidden,
     toggleMoneyVisibility,
     soundEnabled,
     toggleSoundEnabled,
     animationsEnabled,
     toggleAnimationsEnabled
   } = useSettings();
-  
-  const { playSound } = useNotificationSound();
-  const { toast } = useToast();
-
+  const {
+    playSound
+  } = useNotificationSound();
+  const {
+    toast
+  } = useToast();
   const handleSoundToggle = () => {
     toggleSoundEnabled();
     if (!soundEnabled) {
@@ -38,12 +38,12 @@ const SettingsPage = () => {
       setTimeout(() => playSound('success'), 100);
       toast({
         title: "Sound notifications enabled",
-        description: "You will now hear audio notifications for important events.",
+        description: "You will now hear audio notifications for important events."
       });
     } else {
       toast({
         title: "Sound notifications disabled",
-        description: "Audio notifications have been turned off.",
+        description: "Audio notifications have been turned off."
       });
     }
   };
@@ -52,54 +52,44 @@ const SettingsPage = () => {
   const handleSaveSettings = () => {
     toast({
       title: "Settings saved",
-      description: "Your preferences have been saved successfully.",
+      description: "Your preferences have been saved successfully."
     });
     playSound('success');
   };
-
   const handleResetSettings = () => {
     toast({
       title: "Settings reset",
       description: "All settings have been reset to their default values.",
-      variant: "destructive",
+      variant: "destructive"
     });
     playSound('alert');
   };
-
   const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({ 
-      opacity: 1, 
+    hidden: {
+      opacity: 0,
+      y: 20
+    },
+    visible: (i: number) => ({
+      opacity: 1,
       y: 0,
-      transition: { 
+      transition: {
         delay: i * 0.1,
         duration: 0.5
       }
     })
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6 my-[28px]">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Settings</h1>
           <p className="text-muted-foreground">Customize your application experience</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleResetSettings}
-            className="flex items-center gap-2"
-          >
+          <Button variant="outline" size="sm" onClick={handleResetSettings} className="flex items-center gap-2">
             <RotateCcw className="h-4 w-4" />
             Reset
           </Button>
-          <Button 
-            size="sm" 
-            onClick={handleSaveSettings}
-            className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700"
-          >
+          <Button size="sm" onClick={handleSaveSettings} className="flex items-center gap-2 bg-brand-600 hover:bg-brand-700">
             <Save className="h-4 w-4" />
             Save Changes
           </Button>
@@ -115,12 +105,7 @@ const SettingsPage = () => {
         </TabsList>
 
         <TabsContent value="appearance" className="space-y-4">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            custom={0}
-            variants={cardVariants}
-          >
+          <motion.div initial="hidden" animate="visible" custom={0} variants={cardVariants}>
             <Card className="overflow-hidden border-l-4 border-l-brand-500 shadow-md hover:shadow-lg transition-all">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -139,12 +124,7 @@ const SettingsPage = () => {
                       Choose between light and dark mode
                     </div>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={toggleTheme}
-                    className={`transition-all ${theme === "dark" ? "bg-gray-800 text-yellow-400" : "bg-blue-50 text-blue-900"}`}
-                  >
+                  <Button variant="outline" size="icon" onClick={toggleTheme} className={`transition-all ${theme === "dark" ? "bg-gray-800 text-yellow-400" : "bg-blue-50 text-blue-900"}`}>
                     {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
                   </Button>
                 </div>
@@ -158,11 +138,7 @@ const SettingsPage = () => {
                       Change the size of text throughout the application
                     </div>
                   </div>
-                  <RadioGroup 
-                    value={fontSize} 
-                    onValueChange={(value) => setFontSize(value as "small" | "medium" | "large")}
-                    className="flex space-x-4"
-                  >
+                  <RadioGroup value={fontSize} onValueChange={value => setFontSize(value as "small" | "medium" | "large")} className="flex space-x-4">
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="small" id="small" />
                       <Label htmlFor="small" className="text-sm">Small</Label>
@@ -188,11 +164,7 @@ const SettingsPage = () => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Switch 
-                      checked={animationsEnabled}
-                      onCheckedChange={toggleAnimationsEnabled}
-                      id="animations-toggle"
-                    />
+                    <Switch checked={animationsEnabled} onCheckedChange={toggleAnimationsEnabled} id="animations-toggle" />
                     <Label htmlFor="animations-toggle" className="cursor-pointer">
                       {animationsEnabled ? <Zap className="h-5 w-5 text-yellow-500" /> : <ZapOff className="h-5 w-5" />}
                     </Label>
@@ -204,12 +176,7 @@ const SettingsPage = () => {
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-4">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            custom={0}
-            variants={cardVariants}
-          >
+          <motion.div initial="hidden" animate="visible" custom={0} variants={cardVariants}>
             <Card className="overflow-hidden border-l-4 border-l-brand-500 shadow-md hover:shadow-lg transition-all">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -229,11 +196,7 @@ const SettingsPage = () => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Switch 
-                      checked={soundEnabled}
-                      onCheckedChange={handleSoundToggle}
-                      id="sound-toggle"
-                    />
+                    <Switch checked={soundEnabled} onCheckedChange={handleSoundToggle} id="sound-toggle" />
                     <Label htmlFor="sound-toggle" className="cursor-pointer">
                       {soundEnabled ? <Volume2 className="h-5 w-5 text-green-500" /> : <VolumeX className="h-5 w-5" />}
                     </Label>
@@ -247,13 +210,7 @@ const SettingsPage = () => {
                     <Label className="text-base">Sound Volume</Label>
                     <span className="text-sm text-muted-foreground">{soundEnabled ? "Active" : "Muted"}</span>
                   </div>
-                  <Slider 
-                    defaultValue={[70]} 
-                    max={100}
-                    step={10} 
-                    className={soundEnabled ? "" : "opacity-50"}
-                    disabled={!soundEnabled}
-                  />
+                  <Slider defaultValue={[70]} max={100} step={10} className={soundEnabled ? "" : "opacity-50"} disabled={!soundEnabled} />
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>0%</span>
                     <span>50%</span>
@@ -280,12 +237,7 @@ const SettingsPage = () => {
         </TabsContent>
 
         <TabsContent value="privacy" className="space-y-4">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            custom={0}
-            variants={cardVariants}
-          >
+          <motion.div initial="hidden" animate="visible" custom={0} variants={cardVariants}>
             <Card className="overflow-hidden border-l-4 border-l-brand-500 shadow-md hover:shadow-lg transition-all">
               <CardHeader>
                 <CardTitle>Privacy</CardTitle>
@@ -301,10 +253,7 @@ const SettingsPage = () => {
                       Hide monetary values on the dashboard
                     </div>
                   </div>
-                  <Switch 
-                    checked={isMoneyHidden}
-                    onCheckedChange={toggleMoneyVisibility}
-                  />
+                  <Switch checked={isMoneyHidden} onCheckedChange={toggleMoneyVisibility} />
                 </div>
 
                 <Separator />
@@ -341,12 +290,7 @@ const SettingsPage = () => {
         </TabsContent>
 
         <TabsContent value="advanced" className="space-y-4">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            custom={0}
-            variants={cardVariants}
-          >
+          <motion.div initial="hidden" animate="visible" custom={0} variants={cardVariants}>
             <Card className="overflow-hidden border-l-4 border-l-brand-500 shadow-md hover:shadow-lg transition-all">
               <CardHeader>
                 <CardTitle>Advanced Settings</CardTitle>
@@ -400,8 +344,6 @@ const SettingsPage = () => {
           </motion.div>
         </TabsContent>
       </Tabs>
-    </div>
-  );
+    </div>;
 };
-
 export default SettingsPage;
