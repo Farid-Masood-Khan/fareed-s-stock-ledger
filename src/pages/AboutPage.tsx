@@ -28,7 +28,7 @@ const AboutPage = () => {
       }
     }
   };
-  return <motion.div className="space-y-8" variants={containerVariants} initial="hidden" animate="visible">
+  return <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8 my-[28px]">
       <motion.div variants={itemVariants}>
         <h1 className="text-3xl font-bold mb-6">About Us</h1>
       </motion.div>
