@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useStore } from "@/context/StoreContext";
 import { formatCurrency, formatDateTime, generateInvoiceNumber } from "@/utils/formatters";
@@ -598,25 +597,28 @@ const Sales = () => {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="none">None (Direct Sale)</SelectItem>
+                            
+                            {/* Fix: Remove the disabled SelectItems with empty values and use proper group labels */}
                             {shopkeepers.length > 0 && (
                               <>
-                                <SelectItem value="shopkeepers-group" disabled>
+                                <div className="px-2 py-1.5 text-sm font-medium text-muted-foreground">
                                   --- Shopkeepers ---
-                                </SelectItem>
+                                </div>
                                 {shopkeepers.map(shopkeeper => (
-                                  <SelectItem key={`shopkeeper-${shopkeeper.id}`} value={shopkeeper.id}>
+                                  <SelectItem key={`shopkeeper-${shopkeeper.id}`} value={shopkeeper.id || 'undefined-shopkeeper'}>
                                     {shopkeeper.name}
                                   </SelectItem>
                                 ))}
                               </>
                             )}
+                            
                             {customers && customers.length > 0 && (
                               <>
-                                <SelectItem value="customers-group" disabled>
+                                <div className="px-2 py-1.5 text-sm font-medium text-muted-foreground">
                                   --- Regular Customers ---
-                                </SelectItem>
+                                </div>
                                 {customers.map(customer => (
-                                  <SelectItem key={`customer-${customer.id}`} value={customer.id}>
+                                  <SelectItem key={`customer-${customer.id}`} value={customer.id || 'undefined-customer'}>
                                     {customer.name}
                                   </SelectItem>
                                 ))}

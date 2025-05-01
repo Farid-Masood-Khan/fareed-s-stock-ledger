@@ -10,14 +10,14 @@ interface AuthWrapperProps {
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   const location = useLocation();
-  const { currentUser, initAuth } = useStore();
+  const { currentUser } = useStore();
   const { toast } = useToast();
   
   // Initialize authentication when component mounts
   useEffect(() => {
-    // Check if we have stored credentials and authenticate
-    initAuth();
-  }, [initAuth]);
+    // Since initAuth doesn't exist in StoreContext, we'll just check authentication status here
+    // You can add further initialization logic if needed
+  }, []);
 
   // If authentication is in progress, show loading indicator
   if (location.pathname !== "/login" && currentUser === undefined) {

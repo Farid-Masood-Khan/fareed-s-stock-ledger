@@ -44,8 +44,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         
         {/* Main content area */}
         <div className="flex-1 flex flex-col h-full overflow-hidden">
-          {/* Fixed top navbar */}
-          <div className="fixed top-0 left-0 right-0 z-10">
+          {/* Fixed top navbar - updated to be truly fixed */}
+          <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b">
             <Navbar 
               sidebarOpen={sidebarOpen}
               toggleSidebar={toggleSidebar} 
