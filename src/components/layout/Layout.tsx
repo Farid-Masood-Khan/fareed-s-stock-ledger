@@ -49,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({
           </div>
           
           {/* Main content with scroll - adjust padding-top to account for fixed navbar */}
-          <main className="flex-1 overflow-auto p-4 md:p-6 pt-20 mt-4 px-[24px]">
+          <main className="flex-1 overflow-auto p-4 md:p-6 pt-20 mt-4 px-[24px] my-[17px]">
             <div className="mx-auto max-w-7xl">
               {children}
             </div>
