@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -7,61 +6,56 @@ import { useSettings } from "@/context/SettingsContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-
 interface LayoutProps {
   children: React.ReactNode;
 }
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({
+  children
+}) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
-  const { settings } = useSettings();
-  const { currentUser, logout } = useStore();
-  const { toast } = useToast();
+  const {
+    settings
+  } = useSettings();
+  const {
+    currentUser,
+    logout
+  } = useStore();
+  const {
+    toast
+  } = useToast();
 
   // Handle sidebar toggle
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-
   const handleLogout = () => {
     logout();
     toast({
       title: "Success",
-      description: "You've been logged out",
+      description: "You've been logged out"
     });
   };
-
-  return (
-    <div className={`h-screen flex flex-col ${settings?.theme === "dark" ? "dark" : ""}`}>
+  return <div className={`h-screen flex flex-col ${settings?.theme === "dark" ? "dark" : ""}`}>
       {/* Sidebar for larger screens */}
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar 
-          isOpen={sidebarOpen} 
-          toggleSidebar={toggleSidebar} 
-          currentPath={location.pathname}
-        />
+        <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} currentPath={location.pathname} />
         
         {/* Main content area */}
         <div className="flex-1 flex flex-col h-full overflow-hidden">
           {/* Fixed top navbar - updated to be truly fixed */}
           <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b">
-            <Navbar 
-              sidebarOpen={sidebarOpen}
-              toggleSidebar={toggleSidebar} 
-            />
+            <Navbar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
           </div>
           
           {/* Main content with scroll - adjust padding-top to account for fixed navbar */}
-          <main className="flex-1 overflow-auto p-4 md:p-6 pt-20 mt-4">
+          <main className="flex-1 overflow-auto p-4 md:p-6 pt-20 mt-4 px-[24px]">
             <div className="mx-auto max-w-7xl">
               {children}
             </div>
           </main>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Layout;
