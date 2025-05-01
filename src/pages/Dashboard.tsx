@@ -7,18 +7,18 @@ import { ChartBar, Users, Wallet, Receipt, EyeOff, Laptop, Calendar } from "luci
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, BarChart, Bar } from 'recharts';
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-
 const Dashboard = () => {
-  const { 
-    generateSalesReport, 
-    generateStockReport, 
+  const {
+    generateSalesReport,
+    generateStockReport,
     generateFinancialSummary,
     products,
-    sales 
+    sales
   } = useStore();
-  
-  const { isMoneyHidden, toggleMoneyVisibility } = useSettings();
-
+  const {
+    isMoneyHidden,
+    toggleMoneyVisibility
+  } = useSettings();
   const dailyReport = generateSalesReport("daily");
   const weeklyReport = generateSalesReport("weekly");
   const stockReport = generateStockReport();
@@ -30,21 +30,22 @@ const Dashboard = () => {
   };
 
   // Prepare data for recent sales chart with potentially hidden values
-  const last7DaysSales = Array.from({ length: 7 }, (_, index) => {
+  const last7DaysSales = Array.from({
+    length: 7
+  }, (_, index) => {
     const date = new Date();
     date.setDate(date.getDate() - (6 - index));
-    const dateStr = date.toLocaleDateString('en-US', { weekday: 'short' });
-    
-    const dayTotal = sales
-      .filter(sale => {
-        const saleDate = new Date(sale.date);
-        return saleDate.getDate() === date.getDate() &&
-               saleDate.getMonth() === date.getMonth() &&
-               saleDate.getFullYear() === date.getFullYear();
-      })
-      .reduce((sum, sale) => sum + sale.total, 0);
-    
-    return { name: dateStr, amount: dayTotal };
+    const dateStr = date.toLocaleDateString('en-US', {
+      weekday: 'short'
+    });
+    const dayTotal = sales.filter(sale => {
+      const saleDate = new Date(sale.date);
+      return saleDate.getDate() === date.getDate() && saleDate.getMonth() === date.getMonth() && saleDate.getFullYear() === date.getFullYear();
+    }).reduce((sum, sale) => sum + sale.total, 0);
+    return {
+      name: dateStr,
+      amount: dayTotal
+    };
   });
 
   // Prepare data for category distribution
@@ -56,39 +57,37 @@ const Dashboard = () => {
     acc[category] += product.quantity * product.price;
     return acc;
   }, {} as Record<string, number>);
-
   const categoryChartData = Object.entries(categoryData).map(([name, value]) => ({
     name,
-    value,
+    value
   }));
 
   // Animation variants
   const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
+    hidden: {
+      opacity: 0
+    },
+    visible: {
       opacity: 1,
-      transition: { 
-        staggerChildren: 0.1,
+      transition: {
+        staggerChildren: 0.1
       }
     }
   };
-
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
+    hidden: {
+      y: 20,
+      opacity: 0
+    },
+    visible: {
+      y: 0,
       opacity: 1,
-      transition: { duration: 0.4 }
+      transition: {
+        duration: 0.4
+      }
     }
   };
-
-  return (
-    <motion.div 
-      className="space-y-6"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+  return <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6 my-[28px]">
       <motion.div className="flex items-center justify-between" variants={itemVariants}>
         <div>
           <h1 className="text-2xl font-bold">Dashboard Overview</h1>
@@ -96,13 +95,12 @@ const Dashboard = () => {
             Welcome to Subhan Computer's Stock Management System
           </p>
         </div>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={toggleMoneyVisibility}
-            className="flex items-center gap-2"
-          >
+        <motion.div whileHover={{
+        scale: 1.02
+      }} whileTap={{
+        scale: 0.98
+      }}>
+          <Button variant="outline" size="sm" onClick={toggleMoneyVisibility} className="flex items-center gap-2">
             <EyeOff size={16} />
             {isMoneyHidden ? "Show Values" : "Hide Values"}
           </Button>
@@ -110,7 +108,12 @@ const Dashboard = () => {
       </motion.div>
       
       <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <motion.div variants={itemVariants} whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}>
+        <motion.div variants={itemVariants} whileHover={{
+        scale: 1.02,
+        transition: {
+          duration: 0.2
+        }
+      }}>
           <Card className="transition-shadow hover:shadow-md">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm text-muted-foreground font-medium">Daily Sales</CardTitle>
@@ -125,7 +128,12 @@ const Dashboard = () => {
           </Card>
         </motion.div>
         
-        <motion.div variants={itemVariants} whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}>
+        <motion.div variants={itemVariants} whileHover={{
+        scale: 1.02,
+        transition: {
+          duration: 0.2
+        }
+      }}>
           <Card className="transition-shadow hover:shadow-md">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm text-muted-foreground font-medium">Inventory Value</CardTitle>
@@ -140,7 +148,12 @@ const Dashboard = () => {
           </Card>
         </motion.div>
         
-        <motion.div variants={itemVariants} whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}>
+        <motion.div variants={itemVariants} whileHover={{
+        scale: 1.02,
+        transition: {
+          duration: 0.2
+        }
+      }}>
           <Card className="transition-shadow hover:shadow-md">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm text-muted-foreground font-medium">Shopkeeper Balance</CardTitle>
@@ -155,7 +168,12 @@ const Dashboard = () => {
           </Card>
         </motion.div>
         
-        <motion.div variants={itemVariants} whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}>
+        <motion.div variants={itemVariants} whileHover={{
+        scale: 1.02,
+        transition: {
+          duration: 0.2
+        }
+      }}>
           <Card className="transition-shadow hover:shadow-md">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm text-muted-foreground font-medium">Net Balance</CardTitle>
@@ -179,24 +197,20 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={last7DaysSales}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
-                >
+                <LineChart data={last7DaysSales} margin={{
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 10
+              }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis domain={[0, 'auto']} tickFormatter={(value) => isMoneyHidden ? "***" : formatCurrency(value)} />
-                  <Tooltip 
-                    formatter={(value) => [isMoneyHidden ? "***" : formatCurrency(value as number), 'Sales']}
-                  />
+                  <YAxis domain={[0, 'auto']} tickFormatter={value => isMoneyHidden ? "***" : formatCurrency(value)} />
+                  <Tooltip formatter={value => [isMoneyHidden ? "***" : formatCurrency(value as number), 'Sales']} />
                   <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="amount"
-                    name="Sales"
-                    stroke="#1E3A8A"
-                    activeDot={{ r: 8 }}
-                  />
+                  <Line type="monotone" dataKey="amount" name="Sales" stroke="#1E3A8A" activeDot={{
+                  r: 8
+                }} />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -210,16 +224,16 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={categoryChartData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                >
+                <BarChart data={categoryChartData} margin={{
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 5
+              }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
-                  <YAxis tickFormatter={(value) => isMoneyHidden ? "***" : formatCurrency(value)} />
-                  <Tooltip 
-                    formatter={(value) => [isMoneyHidden ? "***" : formatCurrency(value as number), 'Value']}
-                  />
+                  <YAxis tickFormatter={value => isMoneyHidden ? "***" : formatCurrency(value)} />
+                  <Tooltip formatter={value => [isMoneyHidden ? "***" : formatCurrency(value as number), 'Value']} />
                   <Legend />
                   <Bar dataKey="value" name="Value" fill="#3B82F6" />
                 </BarChart>
@@ -291,22 +305,22 @@ const Dashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {weeklyReport.topSellingProducts.map((product, index) => (
-                      <motion.tr 
-                        key={product.productId} 
-                        className="border-b hover:bg-muted/50"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                      >
+                    {weeklyReport.topSellingProducts.map((product, index) => <motion.tr key={product.productId} className="border-b hover:bg-muted/50" initial={{
+                    opacity: 0,
+                    y: 10
+                  }} animate={{
+                    opacity: 1,
+                    y: 0
+                  }} transition={{
+                    delay: index * 0.1
+                  }}>
                         <td className="p-3">{product.productName}</td>
                         <td className="p-3">
                           {products.find(p => p.id === product.productId)?.code || 'N/A'}
                         </td>
                         <td className="p-3 text-right">{product.quantitySold}</td>
                         <td className="p-3 text-right">{formatMoney(product.revenue)}</td>
-                      </motion.tr>
-                    ))}
+                      </motion.tr>)}
                   </tbody>
                 </table>
               </div>
@@ -314,8 +328,6 @@ const Dashboard = () => {
           </Card>
         </motion.div>
       </motion.div>
-    </motion.div>
-  );
+    </motion.div>;
 };
-
 export default Dashboard;
