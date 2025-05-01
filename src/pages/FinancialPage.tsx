@@ -1,36 +1,32 @@
-
 import React, { useState } from "react";
 import { useStore } from "@/context/StoreContext";
 import { formatCurrency } from "@/utils/formatters";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Wallet, ChartBar, ArrowUp, ArrowDown } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-
 const FinancialPage = () => {
-  const { generateFinancialSummary, generateStockReport, shopkeepers } = useStore();
+  const {
+    generateFinancialSummary,
+    generateStockReport,
+    shopkeepers
+  } = useStore();
   const financialSummary = generateFinancialSummary();
   const stockReport = generateStockReport();
 
   // Prepare data for pie chart
-  const assetsData = [
-    { name: "Stock Value", value: financialSummary.totalStockValue },
-    { name: "Receivables", value: financialSummary.totalDueFromShopkeepers },
-  ];
-
-  const liabilitiesData = [
-    { name: "Payables", value: financialSummary.totalDueToShopkeepers },
-  ];
-
+  const assetsData = [{
+    name: "Stock Value",
+    value: financialSummary.totalStockValue
+  }, {
+    name: "Receivables",
+    value: financialSummary.totalDueFromShopkeepers
+  }];
+  const liabilitiesData = [{
+    name: "Payables",
+    value: financialSummary.totalDueToShopkeepers
+  }];
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6 my-[28px]">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">Financial Overview</h1>
       </div>
@@ -101,22 +97,13 @@ const FinancialPage = () => {
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie
-                    data={assetsData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    nameKey="name"
-                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(1)}%`}
-                  >
-                    {assetsData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
+                  <Pie data={assetsData} cx="50%" cy="50%" labelLine={false} outerRadius={80} fill="#8884d8" dataKey="value" nameKey="name" label={({
+                  name,
+                  percent
+                }) => `${name}: ${(percent * 100).toFixed(1)}%`}>
+                    {assetsData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                   </Pie>
-                  <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                  <Tooltip formatter={value => formatCurrency(value as number)} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -140,27 +127,15 @@ const FinancialPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {shopkeepers.length === 0 ? (
-                    <tr>
+                  {shopkeepers.length === 0 ? <tr>
                       <td colSpan={3} className="p-4 text-center">No shopkeepers found</td>
-                    </tr>
-                  ) : (
-                    shopkeepers.map((shopkeeper) => (
-                      <tr key={shopkeeper.id} className="border-b hover:bg-muted/50">
+                    </tr> : shopkeepers.map(shopkeeper => <tr key={shopkeeper.id} className="border-b hover:bg-muted/50">
                         <td className="p-3">{shopkeeper.name}</td>
                         <td className="p-3 text-right">{formatCurrency(Math.abs(shopkeeper.balance))}</td>
                         <td className="p-3 text-right">
-                          {shopkeeper.balance < 0 ? (
-                            <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">They owe you</span>
-                          ) : shopkeeper.balance > 0 ? (
-                            <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">You owe them</span>
-                          ) : (
-                            <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">No balance</span>
-                          )}
+                          {shopkeeper.balance < 0 ? <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">They owe you</span> : shopkeeper.balance > 0 ? <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">You owe them</span> : <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">No balance</span>}
                         </td>
-                      </tr>
-                    ))
-                  )}
+                      </tr>)}
                 </tbody>
               </table>
             </div>
@@ -224,8 +199,6 @@ const FinancialPage = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default FinancialPage;
