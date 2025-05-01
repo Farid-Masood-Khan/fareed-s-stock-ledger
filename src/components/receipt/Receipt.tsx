@@ -13,7 +13,9 @@ const Receipt = React.forwardRef<HTMLDivElement, ReceiptProps>(({ sale }, ref) =
       <div className="text-center mb-4">
         <h1 className="font-bold text-lg">SUBHAN Computers</h1>
         <p className="text-xs">Computer Hardware & Accessories</p>
-        <p className="text-xs">Contact: (123) 456-7890</p>
+        <p className="text-xs">Owner: Muhammad Subhan</p>
+        <p className="text-xs">Contact: 0300-1234567</p>
+        <p className="text-xs">Address: Shop #123, Computer Market, Saddar, Karachi</p>
       </div>
 
       <div className="border-t border-b border-dashed py-2 mb-2">

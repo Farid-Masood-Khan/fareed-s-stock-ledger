@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -6,9 +7,11 @@ import { useSettings } from "@/context/SettingsContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+
 interface LayoutProps {
   children: React.ReactNode;
 }
+
 const Layout: React.FC<LayoutProps> = ({
   children
 }) => {
@@ -29,6 +32,7 @@ const Layout: React.FC<LayoutProps> = ({
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+  
   const handleLogout = () => {
     logout();
     toast({
@@ -36,14 +40,16 @@ const Layout: React.FC<LayoutProps> = ({
       description: "You've been logged out"
     });
   };
-  return <div className={`h-screen flex flex-col ${settings?.theme === "dark" ? "dark" : ""}`}>
+  
+  return (
+    <div className={`h-screen flex flex-col ${settings?.theme === "dark" ? "dark" : ""}`}>
       {/* Sidebar for larger screens */}
       <div className="flex flex-1 overflow-hidden">
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} currentPath={location.pathname} />
         
         {/* Main content area */}
         <div className="flex-1 flex flex-col h-full overflow-hidden">
-          {/* Fixed top navbar - updated to be truly fixed */}
+          {/* Fixed top navbar */}
           <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b">
             <Navbar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
           </div>
@@ -56,6 +62,8 @@ const Layout: React.FC<LayoutProps> = ({
           </main>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Layout;
