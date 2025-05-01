@@ -1,0 +1,165 @@
+
+@tailwind utilities;
+
+@layer utilities {
+  /* Responsive helpers */
+  .responsive-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+  }
+  
+  .mobile-stack {
+    @apply flex flex-col md:flex-row;
+  }
+  
+  .mobile-full-width {
+    @apply w-full md:w-auto;
+  }
+  
+  .mobile-spacing {
+    @apply mt-4 md:mt-0;
+  }
+  
+  .mobile-text-center {
+    @apply text-center md:text-left;
+  }
+  
+  /* Animation utility classes */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+  }
+
+  .animate-pulse-gentle {
+    animation: pulse 2s infinite;
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce 2s infinite;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+  }
+  
+  /* Pagination */
+  .pagination-button {
+    @apply px-3 py-2 border border-gray-300 bg-white text-gray-500 hover:bg-gray-50;
+  }
+  
+  .pagination-button.active {
+    @apply bg-primary text-white border-primary hover:bg-primary/90;
+  }
+  
+  .dark .pagination-button {
+    @apply border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700;
+  }
+  
+  .dark .pagination-button.active {
+    @apply bg-primary text-white border-primary hover:bg-primary/90;
+  }
+
+  /* Print styles */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    
+    .print-component, .print-component * {
+      visibility: visible;
+    }
+    
+    .print-component {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+    
+    /* Thermal receipt specific styles */
+    .receipt-thermal {
+      width: 80mm;
+      font-family: 'Courier New', monospace;
+      margin: 0 auto;
+      padding: 5mm;
+      background-color: white;
+    }
+    
+    .receipt-thermal .header {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 5mm;
+    }
+    
+    .receipt-thermal .divider {
+      border-top: 1px dashed #000;
+      margin: 3mm 0;
+    }
+    
+    .receipt-thermal .text-center {
+      text-align: center;
+    }
+    
+    .receipt-thermal .text-right {
+      text-align: right;
+    }
+    
+    .receipt-thermal .text-bold {
+      font-weight: bold;
+    }
+    
+    .receipt-thermal table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .receipt-thermal th,
+    .receipt-thermal td {
+      padding: 2mm 0;
+    }
+    
+    .receipt-thermal .footer {
+      text-align: center;
+      margin-top: 5mm;
+      font-size: 0.9em;
+    }
+  }
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Staggered animations for lists */
+.stagger-item:nth-child(1) { animation-delay: 0.1s; }
+.stagger-item:nth-child(2) { animation-delay: 0.2s; }
+.stagger-item:nth-child(3) { animation-delay: 0.3s; }
+.stagger-item:nth-child(4) { animation-delay: 0.4s; }
+.stagger-item:nth-child(5) { animation-delay: 0.5s; }
+.stagger-item:nth-child(6) { animation-delay: 0.6s; }
+.stagger-item:nth-child(7) { animation-delay: 0.7s; }
+.stagger-item:nth-child(8) { animation-delay: 0.8s; }

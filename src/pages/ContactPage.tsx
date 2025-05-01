@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Send } from "lucide-react";
 import { useNotificationSound } from "@/hooks/use-notification-sound";
+import { Separator } from "@/components/ui/separator";
 
 const ContactPage = () => {
   const { toast } = useToast();
@@ -99,13 +100,16 @@ const ContactPage = () => {
       variants={containerVariants} 
       initial="hidden" 
       animate="visible" 
-      className="space-y-6 my-[28px] px-4 md:px-0 max-w-5xl mx-auto"
+      className="max-w-5xl mx-auto px-4 md:px-0 space-y-8 py-8"
     >
       <motion.div variants={itemVariants} className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-3">Contact Developer</h1>
+        <h1 className="text-4xl font-bold mb-3">Contact Developer</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Have questions about the Stock Ledger application? Get in touch with the developer directly using the form below.
         </p>
+        <div className="flex justify-center mt-6">
+          <Separator className="w-24 bg-brand-400" />
+        </div>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
