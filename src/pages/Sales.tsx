@@ -1,45 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { useStore } from "@/context/StoreContext";
 import { formatCurrency, formatDateTime, generateInvoiceNumber } from "@/utils/formatters";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Search, Receipt, Printer, User } from "lucide-react";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue, 
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sale, SaleItem, Product } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { Pagination } from "@/components/ui/pagination";
-
 const ITEMS_PER_PAGE = 10;
-
 const Sales = () => {
-  const { sales, products, shopkeepers, customers, addSale, deleteSale, addCustomer } = useStore();
+  const {
+    sales,
+    products,
+    shopkeepers,
+    customers,
+    addSale,
+    deleteSale,
+    addCustomer
+  } = useStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [viewSale, setViewSale] = useState<Sale | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [newSale, setNewSale] = useState<{
-    items: Array<{ productId: string; quantity: number; price: number }>;
+    items: Array<{
+      productId: string;
+      quantity: number;
+      price: number;
+    }>;
     paymentMethod: string;
     shopkeeperId?: string;
     customerId?: string;
@@ -59,147 +51,114 @@ const Sales = () => {
     customerCnic: "",
     customerEmail: "",
     isNewCustomer: false,
-    notes: "",
+    notes: ""
   });
   const [searchProduct, setSearchProduct] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [saleToDelete, setSaleToDelete] = useState<string | null>(null);
-  
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
 
   // Filter sales based on search term
-  const filteredSales = sales
-    .filter(
-      (sale) =>
-        sale.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (sale.shopkeeperId && shopkeepers.find(s => s.id === sale.shopkeeperId)?.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (sale.customerId && customers?.find(c => c.id === sale.customerId)?.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        sale.items.some(item => 
-          item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.productCode.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    )
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const filteredSales = sales.filter(sale => sale.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) || sale.shopkeeperId && shopkeepers.find(s => s.id === sale.shopkeeperId)?.name.toLowerCase().includes(searchTerm.toLowerCase()) || sale.customerId && customers?.find(c => c.id === sale.customerId)?.name.toLowerCase().includes(searchTerm.toLowerCase()) || sale.items.some(item => item.productName.toLowerCase().includes(searchTerm.toLowerCase()) || item.productCode.toLowerCase().includes(searchTerm.toLowerCase()))).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   // Pagination
   const totalPages = Math.ceil(filteredSales.length / ITEMS_PER_PAGE);
-  const paginatedSales = filteredSales.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE, 
-    currentPage * ITEMS_PER_PAGE
-  );
+  const paginatedSales = filteredSales.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   // Filter products in new sale dialog
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchProduct.toLowerCase()) ||
-      product.code.toLowerCase().includes(searchProduct.toLowerCase()) ||
-      (product.category || "").toLowerCase().includes(searchProduct.toLowerCase())
-  );
-
+  const filteredProducts = products.filter(product => product.name.toLowerCase().includes(searchProduct.toLowerCase()) || product.code.toLowerCase().includes(searchProduct.toLowerCase()) || (product.category || "").toLowerCase().includes(searchProduct.toLowerCase()));
   const handleSelectProduct = (product: Product) => {
     setSelectedProduct(product);
     setQuantity(1);
     setSearchProduct("");
   };
-
   const handleAddProductToSale = () => {
     if (!selectedProduct) return;
-    
     if (quantity <= 0) {
       toast({
         title: "Error",
         description: "Quantity must be greater than zero",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-    
     if (quantity > selectedProduct.quantity) {
       toast({
         title: "Error",
         description: "Not enough stock available",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
-    const existingItemIndex = newSale.items.findIndex(
-      item => item.productId === selectedProduct.id
-    );
-
+    const existingItemIndex = newSale.items.findIndex(item => item.productId === selectedProduct.id);
     if (existingItemIndex >= 0) {
       // Update existing item
       const updatedItems = [...newSale.items];
       const totalQuantity = updatedItems[existingItemIndex].quantity + quantity;
-      
       if (totalQuantity > selectedProduct.quantity) {
         toast({
           title: "Error",
           description: "Not enough stock available",
-          variant: "destructive",
+          variant: "destructive"
         });
         return;
       }
-      
       updatedItems[existingItemIndex].quantity = totalQuantity;
-      setNewSale({ ...newSale, items: updatedItems });
+      setNewSale({
+        ...newSale,
+        items: updatedItems
+      });
     } else {
       // Add new item
       setNewSale({
         ...newSale,
-        items: [
-          ...newSale.items,
-          {
-            productId: selectedProduct.id,
-            quantity,
-            price: selectedProduct.price,
-          },
-        ],
+        items: [...newSale.items, {
+          productId: selectedProduct.id,
+          quantity,
+          price: selectedProduct.price
+        }]
       });
     }
-
     setSelectedProduct(null);
     setQuantity(1);
   };
-
   const handleRemoveItemFromSale = (index: number) => {
     const updatedItems = [...newSale.items];
     updatedItems.splice(index, 1);
-    setNewSale({ ...newSale, items: updatedItems });
+    setNewSale({
+      ...newSale,
+      items: updatedItems
+    });
   };
-
   const calculateTotal = () => {
     return newSale.items.reduce((total, item) => {
       return total + item.quantity * item.price;
     }, 0);
   };
-
   const handleAddSale = () => {
     if (newSale.items.length === 0) {
       toast({
         title: "Error",
         description: "Please add at least one product",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     let customerId = newSale.customerId;
 
     // Handle new customer creation if needed
     if (newSale.isNewCustomer && newSale.customerName) {
       // Check if a customer with the same contact already exists
-      const existingCustomer = customers?.find(
-        c => c.contact === newSale.customerContact || c.cnic === newSale.customerCnic
-      );
-
+      const existingCustomer = customers?.find(c => c.contact === newSale.customerContact || c.cnic === newSale.customerCnic);
       if (existingCustomer) {
         customerId = existingCustomer.id;
         toast({
           title: "Customer Already Exists",
-          description: `Using existing customer record for ${existingCustomer.name}`,
+          description: `Using existing customer record for ${existingCustomer.name}`
         });
       } else {
         // Add new customer
@@ -207,13 +166,11 @@ const Sales = () => {
           name: newSale.customerName,
           contact: newSale.customerContact,
           cnic: newSale.customerCnic,
-          email: newSale.customerEmail,
+          email: newSale.customerEmail
         });
-        
         customerId = newCustomer.id;
       }
     }
-
     const saleItems: SaleItem[] = newSale.items.map(item => {
       const product = products.find(p => p.id === item.productId)!;
       return {
@@ -222,10 +179,9 @@ const Sales = () => {
         productCode: product.code,
         quantity: item.quantity,
         price: item.price,
-        total: item.quantity * item.price,
+        total: item.quantity * item.price
       };
     });
-
     const sale: Omit<Sale, "id"> = {
       invoiceNumber: generateInvoiceNumber(),
       date: new Date(),
@@ -234,14 +190,12 @@ const Sales = () => {
       paymentMethod: newSale.paymentMethod,
       shopkeeperId: newSale.shopkeeperId || undefined,
       customerId: customerId || undefined,
-      notes: newSale.notes,
+      notes: newSale.notes
     };
-
     addSale(sale);
-
     toast({
       title: "Success",
-      description: "Sale recorded successfully",
+      description: "Sale recorded successfully"
     });
 
     // Reset form
@@ -255,39 +209,27 @@ const Sales = () => {
       customerCnic: "",
       customerEmail: "",
       isNewCustomer: false,
-      notes: "",
+      notes: ""
     });
-    
     setIsAddDialogOpen(false);
   };
-
   const handleDeleteSale = () => {
     if (saleToDelete) {
       deleteSale(saleToDelete);
-      
       toast({
         title: "Success",
-        description: "Sale deleted successfully",
+        description: "Sale deleted successfully"
       });
-      
       setSaleToDelete(null);
       setIsDeleteDialogOpen(false);
     }
   };
-
   const handlePrintReceipt = (sale: Sale) => {
     // Create a printable version of the receipt
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
-    
-    const shopkeeper = sale.shopkeeperId 
-      ? shopkeepers.find(s => s.id === sale.shopkeeperId)
-      : null;
-    
-    const customer = sale.customerId
-      ? customers?.find(c => c.id === sale.customerId)
-      : null;
-    
+    const shopkeeper = sale.shopkeeperId ? shopkeepers.find(s => s.id === sale.shopkeeperId) : null;
+    const customer = sale.customerId ? customers?.find(c => c.id === sale.customerId) : null;
     printWindow.document.write(`
       <html>
         <head>
@@ -365,23 +307,15 @@ const Sales = () => {
         </body>
       </html>
     `);
-    
     printWindow.document.close();
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6 my-[28px]">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">Sales Management</h1>
         <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
           <div className="relative w-full md:w-64">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search sales..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+            <Input placeholder="Search sales..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10" />
           </div>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
@@ -397,49 +331,27 @@ const Sales = () => {
                   <div className="flex gap-2">
                     <div className="flex-1 relative">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                      <Input
-                        placeholder="Search products..."
-                        value={searchProduct}
-                        onChange={(e) => setSearchProduct(e.target.value)}
-                        className="pl-10"
-                      />
+                      <Input placeholder="Search products..." value={searchProduct} onChange={e => setSearchProduct(e.target.value)} className="pl-10" />
                     </div>
                   </div>
-                  {searchProduct && (
-                    <div className="border rounded-md mt-1 max-h-40 overflow-y-auto">
-                      {filteredProducts.length === 0 ? (
-                        <p className="p-2 text-sm text-muted-foreground">No products found</p>
-                      ) : (
-                        filteredProducts.map((product) => (
-                          <div
-                            key={product.id}
-                            className="p-2 hover:bg-muted cursor-pointer flex justify-between items-center border-b last:border-0"
-                            onClick={() => handleSelectProduct(product)}
-                          >
+                  {searchProduct && <div className="border rounded-md mt-1 max-h-40 overflow-y-auto">
+                      {filteredProducts.length === 0 ? <p className="p-2 text-sm text-muted-foreground">No products found</p> : filteredProducts.map(product => <div key={product.id} className="p-2 hover:bg-muted cursor-pointer flex justify-between items-center border-b last:border-0" onClick={() => handleSelectProduct(product)}>
                             <div>
                               <div className="font-medium">{product.name}</div>
                               <div className="text-xs text-muted-foreground">
                                 {product.code} • {formatCurrency(product.price)} • Stock: {product.quantity}
                               </div>
                             </div>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleSelectProduct(product);
-                              }}
-                            >
+                            <Button size="sm" variant="ghost" onClick={e => {
+                      e.stopPropagation();
+                      handleSelectProduct(product);
+                    }}>
                               Select
                             </Button>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  )}
+                          </div>)}
+                    </div>}
                   
-                  {selectedProduct && (
-                    <div className="border rounded-md p-4 mt-2 bg-muted/30">
+                  {selectedProduct && <div className="border rounded-md p-4 mt-2 bg-muted/30">
                       <div className="grid grid-cols-2 gap-4 mb-4">
                         <div>
                           <Label>Selected Product</Label>
@@ -451,24 +363,15 @@ const Sales = () => {
                         <div>
                           <Label htmlFor="quantity">Quantity</Label>
                           <div className="flex gap-2 mt-1">
-                            <Input
-                              id="quantity"
-                              type="number"
-                              min={1}
-                              max={selectedProduct.quantity}
-                              value={quantity}
-                              onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                            />
+                            <Input id="quantity" type="number" min={1} max={selectedProduct.quantity} value={quantity} onChange={e => setQuantity(parseInt(e.target.value) || 1)} />
                             <Button onClick={handleAddProductToSale}>Add</Button>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    </div>}
                 </div>
                 
-                {newSale.items.length > 0 && (
-                  <div>
+                {newSale.items.length > 0 && <div>
                     <Label className="mb-2 block">Sale Items</Label>
                     <div className="border rounded-md overflow-hidden">
                       <table className="w-full">
@@ -483,9 +386,8 @@ const Sales = () => {
                         </thead>
                         <tbody>
                           {newSale.items.map((item, index) => {
-                            const product = products.find(p => p.id === item.productId)!;
-                            return (
-                              <tr key={index} className="border-t">
+                        const product = products.find(p => p.id === item.productId)!;
+                        return <tr key={index} className="border-t">
                                 <td className="p-2">
                                   <div>{product.name}</div>
                                   <div className="text-xs text-muted-foreground">{product.code}</div>
@@ -494,17 +396,12 @@ const Sales = () => {
                                 <td className="p-2 text-right">{item.quantity}</td>
                                 <td className="p-2 text-right">{formatCurrency(item.quantity * item.price)}</td>
                                 <td className="p-2 text-right">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleRemoveItemFromSale(index)}
-                                  >
+                                  <Button variant="ghost" size="sm" onClick={() => handleRemoveItemFromSale(index)}>
                                     Remove
                                   </Button>
                                 </td>
-                              </tr>
-                            );
-                          })}
+                              </tr>;
+                      })}
                           <tr className="border-t bg-muted/30">
                             <td colSpan={3} className="p-2 text-right font-medium">Total:</td>
                             <td className="p-2 text-right font-bold">{formatCurrency(calculateTotal())}</td>
@@ -513,16 +410,15 @@ const Sales = () => {
                         </tbody>
                       </table>
                     </div>
-                  </div>
-                )}
+                  </div>}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="paymentMethod">Payment Method</Label>
-                    <Select 
-                      value={newSale.paymentMethod} 
-                      onValueChange={(value) => setNewSale({...newSale, paymentMethod: value})}
-                    >
+                    <Select value={newSale.paymentMethod} onValueChange={value => setNewSale({
+                    ...newSale,
+                    paymentMethod: value
+                  })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select payment method" />
                       </SelectTrigger>
@@ -536,17 +432,14 @@ const Sales = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="customer">Customer Type</Label>
-                    <Select
-                      value={newSale.isNewCustomer ? "new" : (newSale.customerId ? "existing" : (newSale.shopkeeperId ? "shopkeeper" : "direct"))}
-                      onValueChange={(value) => {
-                        setNewSale({
-                          ...newSale, 
-                          isNewCustomer: value === "new", 
-                          shopkeeperId: value === "shopkeeper" ? newSale.shopkeeperId : "",
-                          customerId: value === "existing" ? newSale.customerId : ""
-                        });
-                      }}
-                    >
+                    <Select value={newSale.isNewCustomer ? "new" : newSale.customerId ? "existing" : newSale.shopkeeperId ? "shopkeeper" : "direct"} onValueChange={value => {
+                    setNewSale({
+                      ...newSale,
+                      isNewCustomer: value === "new",
+                      shopkeeperId: value === "shopkeeper" ? newSale.shopkeeperId : "",
+                      customerId: value === "existing" ? newSale.customerId : ""
+                    });
+                  }}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select customer type" />
                       </SelectTrigger>
@@ -561,37 +454,32 @@ const Sales = () => {
                 </div>
 
                 {/* Customer or Shopkeeper selection based on type */}
-                {!newSale.isNewCustomer && newSale.paymentMethod && (
-                  <div className="space-y-2">
-                    {newSale.isNewCustomer === false && (
-                      <div>
+                {!newSale.isNewCustomer && newSale.paymentMethod && <div className="space-y-2">
+                    {newSale.isNewCustomer === false && <div>
                         <Label htmlFor="entity">
                           {newSale.shopkeeperId !== undefined ? "Shopkeeper" : "Customer"}
                         </Label>
-                        <Select 
-                          value={newSale.shopkeeperId || newSale.customerId || "none"} 
-                          onValueChange={(value) => {
-                            if (value === "none") {
-                              setNewSale({
-                                ...newSale, 
-                                shopkeeperId: "",
-                                customerId: "",
-                              });
-                            } else if (shopkeepers.some(s => s.id === value)) {
-                              setNewSale({
-                                ...newSale, 
-                                shopkeeperId: value,
-                                customerId: "",
-                              });
-                            } else {
-                              setNewSale({
-                                ...newSale, 
-                                customerId: value,
-                                shopkeeperId: "",
-                              });
-                            }
-                          }}
-                        >
+                        <Select value={newSale.shopkeeperId || newSale.customerId || "none"} onValueChange={value => {
+                    if (value === "none") {
+                      setNewSale({
+                        ...newSale,
+                        shopkeeperId: "",
+                        customerId: ""
+                      });
+                    } else if (shopkeepers.some(s => s.id === value)) {
+                      setNewSale({
+                        ...newSale,
+                        shopkeeperId: value,
+                        customerId: ""
+                      });
+                    } else {
+                      setNewSale({
+                        ...newSale,
+                        customerId: value,
+                        shopkeeperId: ""
+                      });
+                    }
+                  }}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select..." />
                           </SelectTrigger>
@@ -599,41 +487,30 @@ const Sales = () => {
                             <SelectItem value="none">None (Direct Sale)</SelectItem>
                             
                             {/* Fix: Remove the disabled SelectItems with empty values and use proper group labels */}
-                            {shopkeepers.length > 0 && (
-                              <>
+                            {shopkeepers.length > 0 && <>
                                 <div className="px-2 py-1.5 text-sm font-medium text-muted-foreground">
                                   --- Shopkeepers ---
                                 </div>
-                                {shopkeepers.map(shopkeeper => (
-                                  <SelectItem key={`shopkeeper-${shopkeeper.id}`} value={shopkeeper.id || 'undefined-shopkeeper'}>
+                                {shopkeepers.map(shopkeeper => <SelectItem key={`shopkeeper-${shopkeeper.id}`} value={shopkeeper.id || 'undefined-shopkeeper'}>
                                     {shopkeeper.name}
-                                  </SelectItem>
-                                ))}
-                              </>
-                            )}
+                                  </SelectItem>)}
+                              </>}
                             
-                            {customers && customers.length > 0 && (
-                              <>
+                            {customers && customers.length > 0 && <>
                                 <div className="px-2 py-1.5 text-sm font-medium text-muted-foreground">
                                   --- Regular Customers ---
                                 </div>
-                                {customers.map(customer => (
-                                  <SelectItem key={`customer-${customer.id}`} value={customer.id || 'undefined-customer'}>
+                                {customers.map(customer => <SelectItem key={`customer-${customer.id}`} value={customer.id || 'undefined-customer'}>
                                     {customer.name}
-                                  </SelectItem>
-                                ))}
-                              </>
-                            )}
+                                  </SelectItem>)}
+                              </>}
                           </SelectContent>
                         </Select>
-                      </div>
-                    )}
-                  </div>
-                )}
+                      </div>}
+                  </div>}
 
                 {/* New Customer Form */}
-                {newSale.isNewCustomer && (
-                  <div className="space-y-4 p-4 border rounded-md bg-muted/20">
+                {newSale.isNewCustomer && <div className="space-y-4 p-4 border rounded-md bg-muted/20">
                     <h4 className="font-medium flex items-center">
                       <User className="w-4 h-4 mr-2" />
                       New Customer Details
@@ -641,54 +518,41 @@ const Sales = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="customerName">Name *</Label>
-                        <Input
-                          id="customerName"
-                          placeholder="Customer name"
-                          value={newSale.customerName}
-                          onChange={(e) => setNewSale({ ...newSale, customerName: e.target.value })}
-                          required
-                        />
+                        <Input id="customerName" placeholder="Customer name" value={newSale.customerName} onChange={e => setNewSale({
+                      ...newSale,
+                      customerName: e.target.value
+                    })} required />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="customerContact">Contact</Label>
-                        <Input
-                          id="customerContact"
-                          placeholder="Phone number"
-                          value={newSale.customerContact || ""}
-                          onChange={(e) => setNewSale({ ...newSale, customerContact: e.target.value })}
-                        />
+                        <Input id="customerContact" placeholder="Phone number" value={newSale.customerContact || ""} onChange={e => setNewSale({
+                      ...newSale,
+                      customerContact: e.target.value
+                    })} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="customerCnic">CNIC</Label>
-                        <Input
-                          id="customerCnic"
-                          placeholder="National ID"
-                          value={newSale.customerCnic || ""}
-                          onChange={(e) => setNewSale({ ...newSale, customerCnic: e.target.value })}
-                        />
+                        <Input id="customerCnic" placeholder="National ID" value={newSale.customerCnic || ""} onChange={e => setNewSale({
+                      ...newSale,
+                      customerCnic: e.target.value
+                    })} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="customerEmail">Email (Optional)</Label>
-                        <Input
-                          id="customerEmail"
-                          type="email"
-                          placeholder="customer@example.com"
-                          value={newSale.customerEmail || ""}
-                          onChange={(e) => setNewSale({ ...newSale, customerEmail: e.target.value })}
-                        />
+                        <Input id="customerEmail" type="email" placeholder="customer@example.com" value={newSale.customerEmail || ""} onChange={e => setNewSale({
+                      ...newSale,
+                      customerEmail: e.target.value
+                    })} />
                       </div>
                     </div>
-                  </div>
-                )}
+                  </div>}
                 
                 <div className="space-y-2">
                   <Label htmlFor="notes">Notes (Optional)</Label>
-                  <Input
-                    id="notes"
-                    placeholder="Add any additional information"
-                    value={newSale.notes}
-                    onChange={(e) => setNewSale({ ...newSale, notes: e.target.value })}
-                  />
+                  <Input id="notes" placeholder="Add any additional information" value={newSale.notes} onChange={e => setNewSale({
+                  ...newSale,
+                  notes: e.target.value
+                })} />
                 </div>
               </div>
               <DialogFooter>
@@ -707,10 +571,7 @@ const Sales = () => {
           <CardTitle>Recent Sales</CardTitle>
         </CardHeader>
         <CardContent>
-          {filteredSales.length === 0 ? (
-            <div className="text-center py-4">No sales found</div>
-          ) : (
-            <div className="space-y-4">
+          {filteredSales.length === 0 ? <div className="text-center py-4">No sales found</div> : <div className="space-y-4">
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
                   <thead>
@@ -724,17 +585,10 @@ const Sales = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {paginatedSales.map((sale) => {
-                      const shopkeeper = sale.shopkeeperId
-                        ? shopkeepers.find(s => s.id === sale.shopkeeperId)
-                        : null;
-                      
-                      const customer = sale.customerId
-                        ? customers?.find(c => c.id === sale.customerId)
-                        : null;
-                        
-                      return (
-                        <tr key={sale.id} className="border-b hover:bg-muted/50">
+                    {paginatedSales.map(sale => {
+                  const shopkeeper = sale.shopkeeperId ? shopkeepers.find(s => s.id === sale.shopkeeperId) : null;
+                  const customer = sale.customerId ? customers?.find(c => c.id === sale.customerId) : null;
+                  return <tr key={sale.id} className="border-b hover:bg-muted/50">
                           <td className="p-3">
                             <div className="flex items-center">
                               <Receipt className="h-4 w-4 mr-2 text-gray-400" />
@@ -746,31 +600,19 @@ const Sales = () => {
                             {sale.items.length} {sale.items.length === 1 ? 'item' : 'items'}
                           </td>
                           <td className="p-3">
-                            {shopkeeper ? shopkeeper.name : 
-                             customer ? customer.name : "Direct Sale"}
+                            {shopkeeper ? shopkeeper.name : customer ? customer.name : "Direct Sale"}
                           </td>
                           <td className="p-3 text-right">{formatCurrency(sale.total)}</td>
                           <td className="p-3 text-center">
                             <div className="flex justify-center space-x-2">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handlePrintReceipt(sale)}
-                                title="Print Receipt"
-                              >
+                              <Button variant="ghost" size="icon" onClick={() => handlePrintReceipt(sale)} title="Print Receipt">
                                 <Printer className="h-4 w-4" />
                                 <span className="sr-only">Print</span>
                               </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon" 
-                                className="text-red-500 hover:text-red-700 hover:bg-red-100"
-                                onClick={() => {
-                                  setSaleToDelete(sale.id);
-                                  setIsDeleteDialogOpen(true);
-                                }}
-                                title="Delete Sale"
-                              >
+                              <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-700 hover:bg-red-100" onClick={() => {
+                          setSaleToDelete(sale.id);
+                          setIsDeleteDialogOpen(true);
+                        }} title="Delete Sale">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-trash-2">
                                   <path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" />
                                 </svg>
@@ -778,12 +620,7 @@ const Sales = () => {
                               </Button>
                               <Dialog>
                                 <DialogTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => setViewSale(sale)}
-                                    title="View Details"
-                                  >
+                                  <Button variant="ghost" size="icon" onClick={() => setViewSale(sale)} title="View Details">
                                     <Receipt className="h-4 w-4" />
                                     <span className="sr-only">View</span>
                                   </Button>
@@ -792,8 +629,7 @@ const Sales = () => {
                                   <DialogHeader>
                                     <DialogTitle>Sale Details</DialogTitle>
                                   </DialogHeader>
-                                  {viewSale && (
-                                    <div className="py-4">
+                                  {viewSale && <div className="py-4">
                                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                                         <div>
                                           <h3 className="text-sm font-semibold mb-2">Sale Information</h3>
@@ -810,75 +646,57 @@ const Sales = () => {
                                               <span className="text-muted-foreground">Payment:</span>
                                               <span>{viewSale.paymentMethod}</span>
                                             </div>
-                                            {viewSale.notes && (
-                                              <div className="pt-2">
+                                            {viewSale.notes && <div className="pt-2">
                                                 <span className="text-muted-foreground">Notes:</span>
                                                 <p className="mt-1 text-sm">{viewSale.notes}</p>
-                                              </div>
-                                            )}
+                                              </div>}
                                           </div>
                                         </div>
-                                        {(viewSale.shopkeeperId || viewSale.customerId) && (
-                                          <div>
+                                        {(viewSale.shopkeeperId || viewSale.customerId) && <div>
                                             <h3 className="text-sm font-semibold mb-2">
                                               {viewSale.shopkeeperId ? "Shopkeeper" : "Customer"} Information
                                             </h3>
                                             {(() => {
-                                              if (viewSale.shopkeeperId) {
-                                                const shopkeeper = shopkeepers.find(s => s.id === viewSale?.shopkeeperId);
-                                                return shopkeeper ? (
-                                                  <div className="space-y-1 text-sm">
+                                    if (viewSale.shopkeeperId) {
+                                      const shopkeeper = shopkeepers.find(s => s.id === viewSale?.shopkeeperId);
+                                      return shopkeeper ? <div className="space-y-1 text-sm">
                                                     <div className="flex justify-between">
                                                       <span className="text-muted-foreground">Name:</span>
                                                       <span>{shopkeeper.name}</span>
                                                     </div>
-                                                    {shopkeeper.contact && (
-                                                      <div className="flex justify-between">
+                                                    {shopkeeper.contact && <div className="flex justify-between">
                                                         <span className="text-muted-foreground">Contact:</span>
                                                         <span>{shopkeeper.contact}</span>
-                                                      </div>
-                                                    )}
-                                                    {shopkeeper.address && (
-                                                      <div className="flex justify-between">
+                                                      </div>}
+                                                    {shopkeeper.address && <div className="flex justify-between">
                                                         <span className="text-muted-foreground">Address:</span>
                                                         <span>{shopkeeper.address}</span>
-                                                      </div>
-                                                    )}
-                                                  </div>
-                                                ) : null;
-                                              } else if (viewSale.customerId && customers) {
-                                                const customer = customers.find(c => c.id === viewSale?.customerId);
-                                                return customer ? (
-                                                  <div className="space-y-1 text-sm">
+                                                      </div>}
+                                                  </div> : null;
+                                    } else if (viewSale.customerId && customers) {
+                                      const customer = customers.find(c => c.id === viewSale?.customerId);
+                                      return customer ? <div className="space-y-1 text-sm">
                                                     <div className="flex justify-between">
                                                       <span className="text-muted-foreground">Name:</span>
                                                       <span>{customer.name}</span>
                                                     </div>
-                                                    {customer.contact && (
-                                                      <div className="flex justify-between">
+                                                    {customer.contact && <div className="flex justify-between">
                                                         <span className="text-muted-foreground">Contact:</span>
                                                         <span>{customer.contact}</span>
-                                                      </div>
-                                                    )}
-                                                    {customer.cnic && (
-                                                      <div className="flex justify-between">
+                                                      </div>}
+                                                    {customer.cnic && <div className="flex justify-between">
                                                         <span className="text-muted-foreground">CNIC:</span>
                                                         <span>{customer.cnic}</span>
-                                                      </div>
-                                                    )}
-                                                    {customer.email && (
-                                                      <div className="flex justify-between">
+                                                      </div>}
+                                                    {customer.email && <div className="flex justify-between">
                                                         <span className="text-muted-foreground">Email:</span>
                                                         <span>{customer.email}</span>
-                                                      </div>
-                                                    )}
-                                                  </div>
-                                                ) : null;
-                                              }
-                                              return null;
-                                            })()}
-                                          </div>
-                                        )}
+                                                      </div>}
+                                                  </div> : null;
+                                    }
+                                    return null;
+                                  })()}
+                                          </div>}
                                       </div>
                                       <div>
                                         <h3 className="text-sm font-semibold mb-2">Items</h3>
@@ -893,8 +711,7 @@ const Sales = () => {
                                               </tr>
                                             </thead>
                                             <tbody>
-                                              {viewSale.items.map((item, index) => (
-                                                <tr key={index} className="border-t">
+                                              {viewSale.items.map((item, index) => <tr key={index} className="border-t">
                                                   <td className="p-2">
                                                     <div>{item.productName}</div>
                                                     <div className="text-xs text-muted-foreground">{item.productCode}</div>
@@ -902,8 +719,7 @@ const Sales = () => {
                                                   <td className="p-2 text-right">{formatCurrency(item.price)}</td>
                                                   <td className="p-2 text-right">{item.quantity}</td>
                                                   <td className="p-2 text-right">{formatCurrency(item.total)}</td>
-                                                </tr>
-                                              ))}
+                                                </tr>)}
                                               <tr className="border-t bg-muted/30">
                                                 <td colSpan={3} className="p-2 text-right font-medium">Total:</td>
                                                 <td className="p-2 text-right font-bold">{formatCurrency(viewSale.total)}</td>
@@ -912,73 +728,51 @@ const Sales = () => {
                                           </table>
                                         </div>
                                       </div>
-                                    </div>
-                                  )}
+                                    </div>}
                                 </DialogContent>
                               </Dialog>
                             </div>
                           </td>
-                        </tr>
-                      );
-                    })}
+                        </tr>;
+                })}
                   </tbody>
                 </table>
               </div>
               
               {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-center pt-4">
+              {totalPages > 1 && <div className="flex justify-center pt-4">
                   <Pagination>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage(page => Math.max(page - 1, 1))}
-                      disabled={currentPage === 1}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(page => Math.max(page - 1, 1))} disabled={currentPage === 1}>
                       Previous
                     </Button>
                     <div className="flex items-center gap-1 mx-4">
-                      {Array.from({length: Math.min(5, totalPages)}).map((_, i) => {
-                        // Show a window of 5 pages around current page
-                        let pageNum = i + 1;
-                        if (totalPages > 5) {
-                          if (currentPage > 3) {
-                            pageNum = currentPage - 3 + i;
-                          }
-                          if (currentPage > totalPages - 2) {
-                            pageNum = totalPages - 5 + i + 1;
-                          }
-                        }
-                        
-                        if (pageNum <= totalPages) {
-                          return (
-                            <Button 
-                              key={i} 
-                              variant={currentPage === pageNum ? "default" : "outline"}
-                              size="sm"
-                              className="w-8 h-8 p-0"
-                              onClick={() => setCurrentPage(pageNum)}
-                            >
+                      {Array.from({
+                  length: Math.min(5, totalPages)
+                }).map((_, i) => {
+                  // Show a window of 5 pages around current page
+                  let pageNum = i + 1;
+                  if (totalPages > 5) {
+                    if (currentPage > 3) {
+                      pageNum = currentPage - 3 + i;
+                    }
+                    if (currentPage > totalPages - 2) {
+                      pageNum = totalPages - 5 + i + 1;
+                    }
+                  }
+                  if (pageNum <= totalPages) {
+                    return <Button key={i} variant={currentPage === pageNum ? "default" : "outline"} size="sm" className="w-8 h-8 p-0" onClick={() => setCurrentPage(pageNum)}>
                               {pageNum}
-                            </Button>
-                          );
-                        }
-                        return null;
-                      })}
+                            </Button>;
+                  }
+                  return null;
+                })}
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage(page => Math.min(page + 1, totalPages))}
-                      disabled={currentPage === totalPages}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => setCurrentPage(page => Math.min(page + 1, totalPages))} disabled={currentPage === totalPages}>
                       Next
                     </Button>
                   </Pagination>
-                </div>
-              )}
-            </div>
-          )}
+                </div>}
+            </div>}
         </CardContent>
       </Card>
 
@@ -1001,8 +795,6 @@ const Sales = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>;
 };
-
 export default Sales;
