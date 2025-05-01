@@ -108,6 +108,10 @@
     @apply border-border;
   }
 
+  html {
+    @apply scroll-smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -146,6 +150,17 @@
   
   .btn-animated:active {
     @apply scale-95;
+  }
+  
+  /* Responsive padding adjustments */
+  @media (max-width: 640px) {
+    .container {
+      @apply px-4;
+    }
+    
+    .card-content {
+      @apply p-4;
+    }
   }
 }
 
@@ -211,6 +226,65 @@
   
   .dark .glass-panel {
     @apply bg-black/30 border-white/10;
+  }
+  
+  /* Table improvements for dark mode */
+  .dark .table-row-alt:nth-child(odd) {
+    @apply bg-gray-800/30;
+  }
+  
+  .table-row-alt:nth-child(odd) {
+    @apply bg-gray-100/50;
+  }
+  
+  /* Table hover improvements */
+  .table-row-hover:hover {
+    @apply bg-primary/5;
+  }
+  
+  .dark .table-row-hover:hover {
+    @apply bg-primary/10;
+  }
+  
+  /* Card with subtle border */
+  .card-highlight {
+    @apply border-l-4 border-l-brand-500 shadow-md transition-all duration-300;
+  }
+  
+  .card-highlight:hover {
+    @apply shadow-lg;
+  }
+  
+  /* Form control focus states */
+  .form-control-highlight {
+    @apply focus:border-brand-500 focus:ring-brand-500;
+  }
+  
+  /* Responsive grid */
+  .responsive-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+  }
+  
+  /* Responsive padding for cards */
+  .card-responsive {
+    @apply p-4 sm:p-6;
+  }
+  
+  /* Improved pagination */
+  .pagination-button {
+    @apply px-3 py-2 border border-gray-300 bg-white text-gray-500 hover:bg-gray-50;
+  }
+  
+  .pagination-button.active {
+    @apply bg-primary text-white border-primary hover:bg-primary/90;
+  }
+  
+  .dark .pagination-button {
+    @apply border-gray-700 bg-gray-800 text-gray-300 hover:bg-gray-700;
+  }
+  
+  .dark .pagination-button.active {
+    @apply bg-primary text-white border-primary hover:bg-primary/90;
   }
 }
 
@@ -280,6 +354,29 @@
   }
 }
 
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none;
+  }
+  
+  .mobile-full-width {
+    width: 100%;
+  }
+  
+  .mobile-stack {
+    flex-direction: column;
+  }
+  
+  .mobile-spacing {
+    margin-top: 1rem;
+  }
+  
+  .mobile-text-center {
+    text-align: center;
+  }
+}
+
 /* Animation keyframes */
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -296,6 +393,16 @@
   50% { opacity: 0.7; }
 }
 
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
 /* Utility animations */
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out forwards;
@@ -308,3 +415,21 @@
 .animate-pulse-gentle {
   animation: pulse 2s infinite;
 }
+
+.animate-bounce-subtle {
+  animation: bounce 2s infinite;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+/* Staggered animations for lists */
+.stagger-item:nth-child(1) { animation-delay: 0.1s; }
+.stagger-item:nth-child(2) { animation-delay: 0.2s; }
+.stagger-item:nth-child(3) { animation-delay: 0.3s; }
+.stagger-item:nth-child(4) { animation-delay: 0.4s; }
+.stagger-item:nth-child(5) { animation-delay: 0.5s; }
+.stagger-item:nth-child(6) { animation-delay: 0.6s; }
+.stagger-item:nth-child(7) { animation-delay: 0.7s; }
+.stagger-item:nth-child(8) { animation-delay: 0.8s; }
