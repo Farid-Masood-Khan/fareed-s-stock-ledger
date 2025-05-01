@@ -127,7 +127,7 @@ const ContactPage = () => {
               </div>
               
               <div className="flex">
-                <div className="mr-4 bg-brand-100 dark:bg-gray-800 p-3 rounded-full">
+                <div className="mr-4 bg-brand-100 dark:bg-gray-800 p-3 rounded-full my-[12px]">
                   <Clock className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                 </div>
                 <div>
