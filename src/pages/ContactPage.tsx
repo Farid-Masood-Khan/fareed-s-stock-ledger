@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -8,9 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
-
 const ContactPage = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -18,17 +18,14 @@ const ContactPage = () => {
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const handleInputChange = (field: string, value: string) => {
     setFormData({
       ...formData,
       [field]: value
     });
   };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!formData.name || !formData.phone || !formData.message) {
       toast({
         title: "Error",
@@ -37,54 +34,49 @@ const ContactPage = () => {
       });
       return;
     }
-    
     setIsSubmitting(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       toast({
         title: "Message Sent",
-        description: "We will get back to you soon. Thank you!",
+        description: "We will get back to you soon. Thank you!"
       });
-      
       setFormData({
         name: "",
         email: "",
         phone: "",
         message: ""
       });
-      
       setIsSubmitting(false);
     }, 1500);
   };
-
   const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
+    hidden: {
+      opacity: 0
+    },
+    visible: {
       opacity: 1,
-      transition: { 
+      transition: {
         staggerChildren: 0.1,
         duration: 0.5
       }
     }
   };
-
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
+    hidden: {
+      y: 20,
+      opacity: 0
+    },
+    visible: {
+      y: 0,
       opacity: 1,
-      transition: { duration: 0.5 }
+      transition: {
+        duration: 0.5
+      }
     }
   };
-
-  return (
-    <motion.div 
-      className="space-y-8"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+  return <motion.div className="space-y-8" variants={containerVariants} initial="hidden" animate="visible">
       <motion.div variants={itemVariants}>
         <h1 className="text-3xl font-bold mb-2">Contact Us</h1>
         <p className="text-muted-foreground">Get in touch with our team for any inquiries</p>
@@ -99,7 +91,7 @@ const ContactPage = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex">
-                <div className="mr-4 bg-brand-100 dark:bg-gray-800 p-3 rounded-full">
+                <div className="mr-4 bg-brand-100 dark:bg-gray-800 p-3 rounded-full my-[13px] mx-0">
                   <Phone className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                 </div>
                 <div>
@@ -158,63 +150,30 @@ const ContactPage = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name *</Label>
-                  <Input 
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
-                    placeholder="Enter your name"
-                    required
-                  />
+                  <Input id="name" value={formData.name} onChange={e => handleInputChange("name", e.target.value)} placeholder="Enter your name" required />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    placeholder="Enter your email"
-                  />
+                  <Input id="email" type="email" value={formData.email} onChange={e => handleInputChange("email", e.target.value)} placeholder="Enter your email" />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number *</Label>
-                  <Input 
-                    id="phone"
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                    placeholder="Enter your phone number"
-                    required
-                  />
+                  <Input id="phone" value={formData.phone} onChange={e => handleInputChange("phone", e.target.value)} placeholder="Enter your phone number" required />
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="message">Message *</Label>
-                  <Textarea 
-                    id="message"
-                    value={formData.message}
-                    onChange={(e) => handleInputChange("message", e.target.value)}
-                    placeholder="How can we help you?"
-                    className="min-h-[120px]"
-                    required
-                  />
+                  <Textarea id="message" value={formData.message} onChange={e => handleInputChange("message", e.target.value)} placeholder="How can we help you?" className="min-h-[120px]" required />
                 </div>
               </form>
             </CardContent>
             <CardFooter>
-              <Button 
-                className="w-full flex items-center justify-center"
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>Sending...</>
-                ) : (
-                  <>
+              <Button className="w-full flex items-center justify-center" onClick={handleSubmit} disabled={isSubmitting}>
+                {isSubmitting ? <>Sending...</> : <>
                     <Send className="mr-2 h-4 w-4" /> Send Message
-                  </>
-                )}
+                  </>}
               </Button>
             </CardFooter>
           </Card>
@@ -228,21 +187,13 @@ const ContactPage = () => {
           </CardHeader>
           <CardContent>
             <div className="w-full h-[300px] rounded-md overflow-hidden border">
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3427.6076867939632!2d73.0881!3d30.67034!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzDCsDQwJzA5LjkiTiA3M8KwMDUnMjIuMiJF!5e0!3m2!1sen!2s!4v1622933337640!5m2!1sen!2s" 
-                width="100%" 
-                height="100%" 
-                style={{ border: 0 }} 
-                allowFullScreen={false} 
-                loading="lazy"
-                title="Subhan Computer location"
-              ></iframe>
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3427.6076867939632!2d73.0881!3d30.67034!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzDCsDQwJzA5LjkiTiA3M8KwMDUnMjIuMiJF!5e0!3m2!1sen!2s!4v1622933337640!5m2!1sen!2s" width="100%" height="100%" style={{
+              border: 0
+            }} allowFullScreen={false} loading="lazy" title="Subhan Computer location"></iframe>
             </div>
           </CardContent>
         </Card>
       </motion.div>
-    </motion.div>
-  );
+    </motion.div>;
 };
-
 export default ContactPage;
