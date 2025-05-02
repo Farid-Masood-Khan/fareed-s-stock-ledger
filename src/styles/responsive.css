@@ -1,0 +1,103 @@
+
+@tailwind utilities;
+
+/* Mobile-first responsive adjustments */
+@layer utilities {
+  /* General responsive utilities */
+  .responsive-padding {
+    @apply p-4 sm:p-6 lg:p-8;
+  }
+
+  .responsive-margin {
+    @apply my-4 sm:my-6 lg:my-8;
+  }
+
+  /* Form responsiveness */
+  .form-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6;
+  }
+
+  .form-full-width {
+    @apply sm:col-span-2;
+  }
+
+  /* Card responsiveness */
+  .responsive-card-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  /* Table responsiveness */
+  .responsive-table-container {
+    @apply w-full overflow-x-auto rounded-lg shadow-sm border border-border;
+  }
+
+  .responsive-table {
+    @apply w-full min-w-full table-auto;
+  }
+
+  /* Modal/dialog fixes for mobile */
+  .responsive-dialog {
+    @apply p-4 sm:p-6 max-h-[80vh] overflow-y-auto;
+  }
+  
+  /* Responsive text */
+  .responsive-text-sm {
+    @apply text-xs sm:text-sm;
+  }
+  
+  .responsive-text-base {
+    @apply text-sm sm:text-base;
+  }
+  
+  .responsive-text-lg {
+    @apply text-base sm:text-lg md:text-xl;
+  }
+  
+  .responsive-text-xl {
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+  
+  .responsive-text-2xl {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+  
+  /* Responsive navigation */
+  .nav-menu-container {
+    @apply fixed inset-0 z-50 transform transition-transform duration-300 lg:relative lg:inset-auto lg:transform-none;
+  }
+  
+  .nav-menu-container.open {
+    @apply translate-x-0;
+  }
+  
+  .nav-menu-container.closed {
+    @apply -translate-x-full lg:translate-x-0;
+  }
+  
+  /* Responsive sidebar width */
+  .sidebar-width {
+    @apply w-64 md:w-72 lg:w-80;
+  }
+  
+  /* Responsive form inputs */
+  .responsive-input-group {
+    @apply flex flex-col sm:flex-row gap-4;
+  }
+  
+  .responsive-input-group > * {
+    @apply w-full;
+  }
+}
+
+/* Fixes for dialogs and modals */
+@media (max-height: 700px) {
+  .responsive-dialog {
+    max-height: 90vh;
+  }
+}
+
+/* Fix for form dialogs so they're scrollable */
+.dialog-form-fix {
+  max-height: calc(80vh - 100px);
+  overflow-y: auto;
+}

@@ -1,5 +1,19 @@
 
+/* Import base styles and variables */
 @import './styles/base.css';
+
+/* Import component styles */
 @import './styles/components.css';
+
+/* Import utility classes */
 @import './styles/utilities.css';
+
+/* Import animation styles */
 @import './styles/animations.css';
+
+/* Import page-specific styles */
+@import './styles/pages/dashboard.css';
+@import './styles/pages/forms.css';
+
+/* Import responsive styles */
+@import './styles/responsive.css';

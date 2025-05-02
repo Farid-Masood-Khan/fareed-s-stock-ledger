@@ -1,0 +1,97 @@
+
+@tailwind components;
+
+@layer components {
+  /* Dashboard layout */
+  .dashboard-container {
+    @apply space-y-6 py-6;
+  }
+  
+  .dashboard-header {
+    @apply flex flex-col md:flex-row md:items-center justify-between gap-4;
+  }
+  
+  .dashboard-title {
+    @apply text-2xl font-bold;
+  }
+  
+  .dashboard-description {
+    @apply text-muted-foreground;
+  }
+  
+  /* Stats cards */
+  .stats-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4;
+  }
+  
+  .stat-card {
+    @apply border rounded-lg bg-card p-5 transition-shadow hover:shadow-md;
+  }
+  
+  .stat-header {
+    @apply text-sm font-medium text-muted-foreground;
+  }
+  
+  .stat-value {
+    @apply text-2xl font-bold mt-2;
+  }
+  
+  .stat-footer {
+    @apply text-xs text-muted-foreground mt-1 flex items-center gap-2;
+  }
+  
+  /* Chart containers */
+  .chart-container {
+    @apply border rounded-lg bg-card p-5 h-80 transition-shadow hover:shadow-md;
+  }
+  
+  .chart-header {
+    @apply mb-4;
+  }
+  
+  .chart-title {
+    @apply text-base font-medium;
+  }
+  
+  /* Activity feed */
+  .activity-container {
+    @apply border rounded-lg bg-card p-5 transition-shadow hover:shadow-md;
+  }
+  
+  .activity-item {
+    @apply py-3 border-b border-border last:border-0 flex items-center gap-3;
+  }
+  
+  .activity-icon {
+    @apply p-2 rounded-full bg-primary/10 text-primary;
+  }
+  
+  .activity-content {
+    @apply flex-1;
+  }
+  
+  .activity-time {
+    @apply text-xs text-muted-foreground;
+  }
+  
+  /* Data tables */
+  .dashboard-table {
+    @apply w-full border-collapse;
+  }
+  
+  .dashboard-table th {
+    @apply text-left p-3 bg-muted/40 text-muted-foreground font-medium text-sm;
+  }
+  
+  .dashboard-table td {
+    @apply p-3 border-b border-border text-sm;
+  }
+  
+  .dashboard-table tr:last-child td {
+    @apply border-0;
+  }
+  
+  .dashboard-table tr:hover td {
+    @apply bg-muted/30;
+  }
+}

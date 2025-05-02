@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
@@ -18,6 +18,37 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+  
+  // Close sidebar on mobile when route changes
+  useEffect(() => {
+    const handleRouteChange = () => {
+      if (window.innerWidth < 768) {
+        setSidebarOpen(false);
+      }
+    };
+    
+    handleRouteChange();
+    
+    // Listen for route changes
+    return () => {
+      handleRouteChange();
+    };
+  }, [location.pathname]);
+  
+  // Handle window resize to auto-close sidebar on small screens
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setSidebarOpen(false);
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
   
   return (
     <div className={`h-screen flex flex-col ${settings?.theme === "dark" ? "dark" : ""}`}>
