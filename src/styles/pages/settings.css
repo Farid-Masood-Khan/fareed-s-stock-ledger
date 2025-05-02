@@ -1,0 +1,100 @@
+
+@tailwind components;
+
+@layer components {
+  /* Settings page specific styles */
+  .settings-container {
+    @apply space-y-6 max-w-4xl mx-auto;
+  }
+  
+  /* Settings card variants */
+  .settings-card {
+    @apply border rounded-lg bg-card transition-all duration-300 hover:shadow-md overflow-hidden;
+  }
+  
+  .settings-card-highlight {
+    @apply border-l-4 border-l-brand-500;
+  }
+  
+  /* Settings section layout */
+  .settings-section {
+    @apply space-y-6;
+  }
+  
+  .settings-row {
+    @apply flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3;
+  }
+  
+  .settings-label-group {
+    @apply space-y-1;
+  }
+  
+  .settings-label {
+    @apply text-base font-medium;
+  }
+  
+  .settings-description {
+    @apply text-sm text-muted-foreground;
+  }
+  
+  /* Settings controls */
+  .settings-control {
+    @apply flex items-center gap-3;
+  }
+  
+  /* Settings tabs */
+  .settings-tabs {
+    @apply w-full;
+  }
+  
+  .settings-tab-list {
+    @apply mb-6;
+  }
+  
+  .settings-tab {
+    @apply flex items-center gap-2 px-4 py-2;
+  }
+  
+  .settings-tab-icon {
+    @apply h-4 w-4;
+  }
+  
+  /* Form groups */
+  .settings-form-group {
+    @apply space-y-2;
+  }
+  
+  /* Toggle switches with labels */
+  .toggle-with-label {
+    @apply flex items-center space-x-3;
+  }
+  
+  /* Status indicators */
+  .settings-status {
+    @apply text-xs inline-flex items-center;
+  }
+  
+  .status-enabled {
+    @apply text-green-500;
+  }
+  
+  .status-disabled {
+    @apply text-muted-foreground;
+  }
+  
+  /* Settings footer */
+  .settings-footer {
+    @apply bg-muted/50 px-6 py-3 text-xs text-muted-foreground;
+  }
+  
+  /* Responsive adjustments for settings */
+  @media (max-width: 640px) {
+    .settings-row {
+      @apply py-4 border-b border-border last:border-0;
+    }
+    
+    .settings-tab {
+      @apply justify-center;
+    }
+  }
+}

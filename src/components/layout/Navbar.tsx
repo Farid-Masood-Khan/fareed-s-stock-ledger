@@ -14,17 +14,17 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, sidebarOpen }) => {
-  const { settings, updateSetting } = useSettings();
+  const { settings, theme, toggleTheme } = useSettings();
   const { currentUser, logout } = useStore();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const toggleTheme = () => {
-    updateSetting("theme", settings?.theme === "dark" ? "light" : "dark");
+  const handleThemeToggle = () => {
+    toggleTheme();
     
     toast({
-      title: settings?.theme === "dark" ? "Light Mode Enabled" : "Dark Mode Enabled",
-      description: settings?.theme === "dark" 
+      title: theme === "dark" ? "Light Mode Enabled" : "Dark Mode Enabled",
+      description: theme === "dark" 
         ? "The application is now using light theme" 
         : "The application is now using dark theme",
       duration: 2000,
@@ -42,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, sidebarOpen }) => {
   };
 
   return (
-    <header className="bg-background border-b z-50 h-16">
+    <header className="bg-background border-b z-50 h-16 sticky top-0">
       <div className="px-4 h-full flex items-center justify-between">
         <div className="flex items-center">
           <motion.button
@@ -69,11 +69,11 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, sidebarOpen }) => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={toggleTheme}
+              onClick={handleThemeToggle}
               className="text-foreground rounded-full"
-              aria-label={settings?.theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
-              {settings?.theme === "dark" ? (
+              {theme === "dark" ? (
                 <Sun className="h-5 w-5" />
               ) : (
                 <Moon className="h-5 w-5" />

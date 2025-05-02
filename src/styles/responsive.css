@@ -87,6 +87,43 @@
   .responsive-input-group > * {
     @apply w-full;
   }
+  
+  /* Responsive tabs */
+  .responsive-tabs {
+    @apply w-full overflow-x-auto;
+  }
+  
+  .responsive-tab-list {
+    @apply flex whitespace-nowrap;
+  }
+  
+  /* Responsive settings grid */
+  .responsive-settings-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
+  
+  /* Scroll fix for small screens */
+  .scroll-if-needed {
+    @apply overflow-auto max-h-screen;
+  }
+  
+  /* Fixed header offset for content */
+  .header-offset {
+    @apply pt-16;
+  }
+  
+  /* Settings panel responsiveness */
+  .settings-panel {
+    @apply flex flex-col md:flex-row gap-6;
+  }
+  
+  .settings-nav {
+    @apply w-full md:w-64 shrink-0;
+  }
+  
+  .settings-content {
+    @apply flex-1;
+  }
 }
 
 /* Fixes for dialogs and modals */
@@ -100,4 +137,29 @@
 .dialog-form-fix {
   max-height: calc(80vh - 100px);
   overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* Ensure dialogs are scrollable on small screens */
+@media (max-height: 600px) {
+  .dialog-content {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* Ensure content doesn't get cut off under fixed headers */
+.fixed-header-layout {
+  padding-top: 64px;
+}
+
+/* Make tab scrolling smooth on mobile */
+.tab-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tab-scroll::-webkit-scrollbar {
+  display: none;
 }
