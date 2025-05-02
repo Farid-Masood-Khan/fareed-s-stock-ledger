@@ -1,12 +1,17 @@
 
 import React from "react";
-import { Menu, Bell, Moon, Sun, LogOut, Settings } from "lucide-react";
+import { Menu, Bell, Moon, Sun, LogOut, Settings, Search, Plus } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 import { useStore } from "@/context/StoreContext";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface NavbarProps {
   toggleSidebar: () => void;
@@ -18,6 +23,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, sidebarOpen }) => {
   const { currentUser, logout } = useStore();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchOpen, setSearchOpen] = React.useState(false);
 
   const handleThemeToggle = () => {
     toggleTheme();
@@ -39,6 +45,16 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, sidebarOpen }) => {
       variant: "default",
     });
     navigate("/login");
+  };
+  
+  const getUserInitials = () => {
+    if (!currentUser?.name) return "U";
+    return currentUser.name
+      .split(" ")
+      .map(name => name[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   return (
@@ -64,7 +80,48 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, sidebarOpen }) => {
           </motion.span>
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 sm:space-x-2">
+          {/* Search button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSearchOpen(true)}
+            className="text-foreground rounded-full"
+            aria-label="Search"
+          >
+            <Search className="h-5 w-5" />
+          </Button>
+          
+          {/* Quick action button */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-foreground rounded-full"
+              >
+                <Plus className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Quick Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => navigate("/sales/new")}>
+                New Sale
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/inventory/add")}>
+                Add Product
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/customers/add")}>
+                Add Customer
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/expenses/add")}>
+                Record Expense
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Theme toggle */}
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               variant="ghost"
@@ -81,6 +138,7 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, sidebarOpen }) => {
             </Button>
           </motion.div>
           
+          {/* Settings */}
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               variant="ghost"
@@ -93,21 +151,67 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar, sidebarOpen }) => {
             </Button>
           </motion.div>
 
+          {/* User menu */}
           {currentUser && (
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleLogout}
-                className="text-foreground rounded-full"
-                aria-label="Logout"
-              >
-                <LogOut className="h-5 w-5" />
-              </Button>
-            </motion.div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-brand-100 text-brand-800 text-sm">
+                      {getUserInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate("/profile")}>
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/settings")}>
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>
+      
+      {/* Global Search Dialog */}
+      <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Search</DialogTitle>
+            <DialogDescription>
+              Search for products, customers, sales and more.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Input 
+              placeholder="Type to search..." 
+              className="w-full"
+              autoComplete="off"
+              autoFocus
+            />
+            <div className="mt-2">
+              <p className="text-sm text-muted-foreground">
+                Press <kbd className="rounded-md border px-1">↵</kbd> to search
+              </p>
+            </div>
+            <div className="h-64 overflow-y-auto">
+              <p className="text-center text-muted-foreground py-8">
+                Start typing to see results
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 };

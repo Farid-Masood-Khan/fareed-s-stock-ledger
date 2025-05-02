@@ -1,5 +1,4 @@
 
-
 /* Import base styles and variables */
 @import './styles/base.css';
 
@@ -20,3 +19,43 @@
 /* Import responsive styles */
 @import './styles/responsive.css';
 
+/* Global styles */
+html {
+  scroll-behavior: smooth;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Focus styles */
+:focus {
+  outline: 2px solid hsl(var(--brand-500));
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Hide scrollbars for webkit browsers while maintaining functionality */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

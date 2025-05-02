@@ -9,7 +9,7 @@
   
   /* Settings card variants */
   .settings-card {
-    @apply border rounded-lg bg-card transition-all duration-300 hover:shadow-md overflow-hidden;
+    @apply border rounded-xl bg-card transition-all duration-300 hover:shadow-md overflow-hidden;
   }
   
   .settings-card-highlight {
@@ -22,7 +22,7 @@
   }
   
   .settings-row {
-    @apply flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3;
+    @apply flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 border-b border-border last:border-0;
   }
   
   .settings-label-group {
@@ -48,11 +48,15 @@
   }
   
   .settings-tab-list {
-    @apply mb-6;
+    @apply mb-6 border-b border-border;
   }
   
   .settings-tab {
-    @apply flex items-center gap-2 px-4 py-2;
+    @apply flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 border-transparent transition-colors;
+  }
+  
+  .settings-tab[data-state="active"] {
+    @apply border-b-2 border-brand-500 text-brand-500;
   }
   
   .settings-tab-icon {
@@ -71,7 +75,7 @@
   
   /* Status indicators */
   .settings-status {
-    @apply text-xs inline-flex items-center;
+    @apply text-xs inline-flex items-center gap-1;
   }
   
   .status-enabled {
@@ -84,17 +88,67 @@
   
   /* Settings footer */
   .settings-footer {
-    @apply bg-muted/50 px-6 py-3 text-xs text-muted-foreground;
+    @apply bg-muted/50 px-6 py-4 text-xs text-muted-foreground rounded-b-xl;
+  }
+  
+  /* Settings navigation */
+  .settings-nav-item {
+    @apply flex items-center gap-2 px-4 py-3 rounded-lg transition-colors;
+  }
+  
+  .settings-nav-item:hover {
+    @apply bg-muted;
+  }
+  
+  .settings-nav-item.active {
+    @apply bg-brand-500/10 text-brand-600 font-medium;
+  }
+  
+  /* Settings sections */  
+  .settings-header {
+    @apply flex items-center justify-between border-b border-border pb-4 mb-6;
+  }
+  
+  .settings-title {
+    @apply text-xl font-semibold;
+  }
+  
+  /* Color picker section */
+  .color-option {
+    @apply w-8 h-8 rounded-full cursor-pointer border-2 transition-all;
+  }
+  
+  .color-option.selected {
+    @apply ring-2 ring-offset-2 ring-brand-500;
+  }
+  
+  /* Theme preview */
+  .theme-preview {
+    @apply p-4 rounded-lg border border-border;
   }
   
   /* Responsive adjustments for settings */
   @media (max-width: 640px) {
-    .settings-row {
-      @apply py-4 border-b border-border last:border-0;
-    }
-    
     .settings-tab {
       @apply justify-center;
     }
+    
+    .settings-nav {
+      @apply flex overflow-x-auto py-2;
+    }
+    
+    .settings-nav-item {
+      @apply whitespace-nowrap flex-shrink-0;
+    }
+  }
+  
+  /* Settings page animations */
+  .settings-animate-in {
+    @apply animate-fade-in;
+  }
+  
+  /* Settings action buttons */
+  .settings-actions {
+    @apply flex flex-col sm:flex-row gap-2 sm:gap-4 justify-end mt-6 pt-4 border-t border-border;
   }
 }

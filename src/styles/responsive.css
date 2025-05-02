@@ -124,6 +124,33 @@
   .settings-content {
     @apply flex-1;
   }
+  
+  /* Dashboard layout */
+  .dashboard-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6;
+  }
+  
+  .dashboard-chart-grid {
+    @apply grid grid-cols-1 xl:grid-cols-2 gap-6;
+  }
+  
+  /* Action bar responsiveness */
+  .action-bar {
+    @apply flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6;
+  }
+  
+  .action-buttons {
+    @apply flex flex-col sm:flex-row gap-2 w-full sm:w-auto;
+  }
+  
+  /* Quick access panel */
+  .quick-access-panel {
+    @apply grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3;
+  }
+  
+  .quick-access-item {
+    @apply flex flex-col items-center justify-center p-3 rounded-lg border border-border bg-card text-card-foreground transition-all hover:shadow-md hover:-translate-y-1;
+  }
 }
 
 /* Fixes for dialogs and modals */
@@ -162,4 +189,25 @@
 
 .tab-scroll::-webkit-scrollbar {
   display: none;
+}
+
+/* Grid layout for various forms */
+.form-layout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Responsive data visualization containers */
+.data-visualization-container {
+  @apply h-[300px] sm:h-[350px] md:h-[400px] w-full;
+}
+
+/* Enhanced card transitions */
+.enhanced-card {
+  @apply transition-all duration-300 hover:shadow-lg border border-border bg-card text-card-foreground rounded-xl overflow-hidden;
+}
+
+.enhanced-card:hover {
+  @apply transform -translate-y-1;
 }

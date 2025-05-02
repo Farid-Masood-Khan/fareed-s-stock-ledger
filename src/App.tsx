@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 import Dashboard from "./pages/Dashboard";
 import Inventory from "./pages/Inventory";
@@ -22,7 +22,7 @@ import ServicesPage from "./pages/ServicesPage";
 import { StoreProvider } from "./context/StoreContext";
 import { SettingsProvider } from "./context/SettingsContext";
 import AuthWrapper from "./components/auth/AuthWrapper";
-import { LazyMotion, domAnimation, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 
 // Create a new QueryClient with better error handling and security
 const queryClient = new QueryClient({
@@ -64,46 +64,53 @@ const queryClient = new QueryClient({
   },
 });
 
+// Animation wrapper for route transitions
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="*" element={
+          <AuthWrapper>
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/inventory" element={<Inventory />} />
+                <Route path="/sales" element={<Sales />} />
+                <Route path="/customers" element={<CustomersPage />} />
+                <Route path="/shopkeepers" element={<ShopkeepersPage />} />
+                <Route path="/reports" element={<ReportsPage />} />
+                <Route path="/financial" element={<FinancialPage />} />
+                <Route path="/services" element={<ServicesPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/expenses" element={<ExpensesPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+          </AuthWrapper>
+        } />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <LazyMotion features={domAnimation}>
-      <TooltipProvider>
-        <SettingsProvider>
-          <StoreProvider>
-            <Toaster />
-            <Sonner position="top-right" closeButton={true} />
-            <BrowserRouter>
-              <AnimatePresence mode="wait">
-                <Routes>
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="*" element={
-                    <AuthWrapper>
-                      <Layout>
-                        <Routes>
-                          <Route path="/" element={<Dashboard />} />
-                          <Route path="/inventory" element={<Inventory />} />
-                          <Route path="/sales" element={<Sales />} />
-                          <Route path="/customers" element={<CustomersPage />} />
-                          <Route path="/shopkeepers" element={<ShopkeepersPage />} />
-                          <Route path="/reports" element={<ReportsPage />} />
-                          <Route path="/financial" element={<FinancialPage />} />
-                          <Route path="/services" element={<ServicesPage />} />
-                          <Route path="/about" element={<AboutPage />} />
-                          <Route path="/contact" element={<ContactPage />} />
-                          <Route path="/settings" element={<SettingsPage />} />
-                          <Route path="/expenses" element={<ExpensesPage />} />
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </Layout>
-                    </AuthWrapper>
-                  } />
-                </Routes>
-              </AnimatePresence>
-            </BrowserRouter>
-          </StoreProvider>
-        </SettingsProvider>
-      </TooltipProvider>
-    </LazyMotion>
+    <TooltipProvider>
+      <SettingsProvider>
+        <StoreProvider>
+          <Toaster />
+          <Sonner position="top-right" closeButton={true} expand={false} />
+          <BrowserRouter>
+            <AnimatedRoutes />
+          </BrowserRouter>
+        </StoreProvider>
+      </SettingsProvider>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 
