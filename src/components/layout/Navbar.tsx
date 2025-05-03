@@ -49,22 +49,33 @@ const Navbar: React.FC<NavbarProps> = ({
   };
   
   const getUserInitials = () => {
-    if (!currentUser?.email) return "U";
-    // Extract initials from email (first letter before @ and first letter of domain)
-    const emailParts = currentUser.email.split('@');
-    if (emailParts.length < 2) return "U";
-    return (emailParts[0][0] + (emailParts[1][0] || "")).toUpperCase();
+    const userInfo = currentUser?.user_metadata?.name || currentUser?.user_metadata?.full_name || '';
+    if (userInfo) {
+      // Get initials from name
+      return userInfo.split(' ').map((n: string) => n[0]).join('').toUpperCase();
+    }
+    
+    // Fallback: extract from email if available
+    const emailStr = currentUser?.email || '';
+    if (emailStr) {
+      // Extract initials from email (first letter before @ and first letter of domain)
+      const emailParts = emailStr.split('@');
+      if (emailParts.length < 2) return "U";
+      return (emailParts[0][0] + (emailParts[1][0] || "")).toUpperCase();
+    }
+    
+    return "U"; // Default fallback
   };
 
   return (
-    <header className="bg-background/95 backdrop-blur-sm border-b z-50 h-16 sticky top-0 shadow-sm">
+    <header className="bg-gradient-to-r from-background/95 to-background/90 backdrop-blur-md border-b z-50 h-16 sticky top-0 shadow-sm">
       <div className="px-4 h-full flex items-center justify-between">
         <div className="flex items-center">
           <motion.button 
             whileHover={{ scale: 1.05 }} 
             whileTap={{ scale: 0.95 }} 
             onClick={toggleSidebar} 
-            className="p-2 rounded-md hover:bg-accent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" 
+            className="p-2 rounded-md hover:bg-accent/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" 
             aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
           >
             <Menu className="h-5 w-5" />
@@ -73,7 +84,7 @@ const Navbar: React.FC<NavbarProps> = ({
             initial={{ opacity: 0, x: -10 }} 
             animate={{ opacity: 1, x: 0 }} 
             transition={{ duration: 0.3 }}
-            className="ml-3 text-xl font-semibold hidden sm:inline-block text-gradient"
+            className="ml-3 text-xl font-semibold hidden sm:inline-block bg-gradient-to-r from-brand-600 to-brand-500 bg-clip-text text-transparent"
           >
             Stock Ledger
           </motion.span>
@@ -85,7 +96,7 @@ const Navbar: React.FC<NavbarProps> = ({
             variant="ghost" 
             size="icon" 
             onClick={() => setSearchOpen(true)} 
-            className="text-foreground rounded-full hover:bg-accent/60" 
+            className="text-foreground rounded-full hover:bg-accent/70" 
             aria-label="Search"
           >
             <Search className="h-4.5 w-4.5" />
@@ -97,12 +108,12 @@ const Navbar: React.FC<NavbarProps> = ({
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="text-foreground rounded-full hover:bg-accent/60"
+                className="text-foreground rounded-full hover:bg-accent/70"
               >
                 <Plus className="h-4.5 w-4.5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-card/95 backdrop-blur-sm border border-border/50 shadow-xl rounded-xl p-1.5">
+            <DropdownMenuContent align="end" className="w-56 bg-gradient-to-b from-card/95 to-background/95 backdrop-blur-md border border-border/50 shadow-xl rounded-xl p-1.5">
               <DropdownMenuLabel className="px-3 py-2 text-xs font-semibold">Quick Actions</DropdownMenuLabel>
               <DropdownMenuSeparator className="my-1" />
               <DropdownMenuItem onClick={() => navigate("/sales/new")} className="flex items-center gap-2.5 px-3 py-2.5 text-sm cursor-pointer rounded-md hover:bg-accent/70">
@@ -138,7 +149,7 @@ const Navbar: React.FC<NavbarProps> = ({
               variant="ghost" 
               size="icon" 
               onClick={handleThemeToggle} 
-              className="text-foreground rounded-full hover:bg-accent/60" 
+              className="text-foreground rounded-full hover:bg-accent/70" 
               aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
               {theme === "dark" ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
@@ -151,17 +162,20 @@ const Navbar: React.FC<NavbarProps> = ({
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <Avatar className="h-8 w-8 ring-2 ring-brand-200/30 ring-offset-1 ring-offset-background">
-                    <AvatarFallback className="bg-brand-100 text-brand-800 text-sm">
+                    <AvatarFallback className="bg-gradient-to-br from-brand-100 to-brand-200 text-brand-800 text-sm">
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-card/95 backdrop-blur-sm border border-border/50 shadow-xl rounded-xl p-1.5">
+              <DropdownMenuContent align="end" className="w-56 bg-gradient-to-b from-card/95 to-background/95 backdrop-blur-md border border-border/50 shadow-xl rounded-xl p-1.5">
                 <DropdownMenuLabel className="px-3 py-2">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{currentUser.email?.split('@')[0]}</p>
-                    <p className="text-xs leading-none text-muted-foreground">{currentUser.email}</p>
+                    <p className="text-sm font-medium leading-none">
+                      {currentUser.user_metadata?.name || currentUser.user_metadata?.full_name || 
+                       (currentUser.email ? currentUser.email.split('@')[0] : 'User')}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">{currentUser.email || 'No email'}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="my-1" />
@@ -184,7 +198,7 @@ const Navbar: React.FC<NavbarProps> = ({
       
       {/* Global Search Dialog */}
       <Dialog open={searchOpen} onOpenChange={setSearchOpen}>
-        <DialogContent className="sm:max-w-md bg-card/95 backdrop-blur-sm border border-border/50 shadow-xl rounded-xl">
+        <DialogContent className="sm:max-w-md bg-gradient-to-b from-card/95 to-background/95 backdrop-blur-md border border-border/50 shadow-xl rounded-xl">
           <DialogHeader>
             <DialogTitle>Search</DialogTitle>
             <DialogDescription>

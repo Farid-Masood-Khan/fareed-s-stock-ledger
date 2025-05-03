@@ -33,14 +33,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image: 
-    radial-gradient(circle at 100% 0%, rgba(210, 230, 255, 0.3) 0%, transparent 30%),
-    radial-gradient(circle at 0% 100%, rgba(180, 200, 255, 0.2) 0%, transparent 30%);
+    radial-gradient(circle at 100% 0%, rgba(210, 230, 255, 0.4) 0%, transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(180, 200, 255, 0.3) 0%, transparent 40%);
+  transition: background-color 0.3s ease;
 }
 
 .dark body {
   background-image: 
-    radial-gradient(circle at 100% 0%, rgba(30, 50, 100, 0.15) 0%, transparent 30%),
-    radial-gradient(circle at 0% 100%, rgba(40, 60, 110, 0.1) 0%, transparent 30%);
+    radial-gradient(circle at 100% 0%, rgba(30, 50, 100, 0.2) 0%, transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(40, 60, 110, 0.15) 0%, transparent 40%);
 }
 
 #root {
@@ -69,8 +70,59 @@ body {
   scrollbar-width: none;
 }
 
+/* Custom scrollbar styling */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: hsl(var(--brand-200) / 0.4);
+  border-radius: 999px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--brand-300) / 0.6);
+}
+
+.dark .scrollbar-custom::-webkit-scrollbar-thumb {
+  background: hsl(var(--brand-800) / 0.6);
+}
+
+.dark .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--brand-700) / 0.8);
+}
+
 /* Selection styling */
 ::selection {
   background-color: hsl(var(--brand-500) / 0.2);
   color: hsl(var(--foreground));
+}
+
+/* Text gradient */
+.text-gradient {
+  @apply bg-gradient-to-r from-brand-600 to-brand-500 bg-clip-text text-transparent;
+}
+
+/* Card hover effects */
+.hover-card {
+  @apply transition-all duration-300 hover:shadow-md hover:translate-y-[-2px];
+}
+
+/* Button animations */
+.button-hover {
+  @apply transform transition-transform hover:-translate-y-0.5 active:translate-y-0;
+}
+
+/* Glassmorphism */
+.glass {
+  @apply bg-white/10 backdrop-blur-md border border-white/20;
+}
+
+.dark .glass {
+  @apply bg-black/20 backdrop-blur-md border border-white/10;
 }

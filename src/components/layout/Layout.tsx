@@ -89,7 +89,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} currentPath={location.pathname} />
         
         {/* Main content with scroll */}
-        <div className="flex-1 flex flex-col h-full overflow-hidden w-full bg-background/50">
+        <div className="flex-1 flex flex-col h-full overflow-hidden w-full bg-gradient-to-br from-background/50 to-background/70 backdrop-blur-sm">
           <ScrollArea className="flex-1 scrollbar-custom">
             <AnimatePresence mode="wait">
               <motion.main
