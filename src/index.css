@@ -24,6 +24,7 @@ html {
   scroll-behavior: smooth;
   height: 100%;
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -35,7 +36,8 @@ body {
   background-image: 
     radial-gradient(circle at 100% 0%, rgba(210, 230, 255, 0.4) 0%, transparent 40%),
     radial-gradient(circle at 0% 100%, rgba(180, 200, 255, 0.3) 0%, transparent 40%);
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  letter-spacing: -0.011em;
 }
 
 .dark body {
@@ -125,4 +127,97 @@ body {
 
 .dark .glass {
   @apply bg-black/20 backdrop-blur-md border border-white/10;
+}
+
+/* Responsive typography */
+h1, .h1 {
+  @apply text-3xl font-bold md:text-4xl tracking-tight;
+}
+
+h2, .h2 {
+  @apply text-2xl font-semibold md:text-3xl;
+}
+
+h3, .h3 {
+  @apply text-xl font-semibold md:text-2xl;
+}
+
+h4, .h4 {
+  @apply text-lg font-medium md:text-xl;
+}
+
+/* Image rendering */
+img {
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* Form input placeholder opacity */
+::placeholder {
+  @apply opacity-60;
+}
+
+/* Touch target size */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* Interactive elements */
+a, button {
+  @apply transition-colors duration-200;
+}
+
+/* Responsive container */
+.container-fluid {
+  @apply px-4 sm:px-6 lg:px-8 mx-auto;
+}
+
+/* Better border */
+.border-hairline {
+  @apply border border-border/60;
+}
+
+/* Better shadow */
+.shadow-soft {
+  @apply shadow-[0_4px_12px_-2px_rgba(0,0,0,0.08)];
+}
+
+.dark .shadow-soft {
+  @apply shadow-[0_4px_12px_-2px_rgba(0,0,0,0.16)];
+}
+
+/* Professional card design */
+.card-pro {
+  @apply bg-gradient-to-b from-card to-card/90 border-border/60 border rounded-xl shadow-soft;
+}
+
+/* Professional button */
+.btn-pro {
+  @apply transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500;
+}
+
+/* Dashboard stat and card designs */
+.stat-card {
+  @apply border rounded-xl p-5 bg-gradient-to-br from-card to-background backdrop-blur-md shadow-soft;
+}
+
+.data-card {
+  @apply border rounded-xl p-5 bg-gradient-to-br from-card to-background backdrop-blur-md shadow-soft;
+}
+
+/* Tag/Badge designs */
+.tag {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-muted/50 text-muted-foreground border border-muted;
+}
+
+/* Status indicators */
+.status-circle {
+  @apply h-2.5 w-2.5 rounded-full inline-block;
+}
+
+.status-active {
+  @apply bg-green-500 animate-pulse;
+}
+
+.status-inactive {
+  @apply bg-muted-foreground/40;
 }

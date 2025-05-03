@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -28,6 +29,16 @@ const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const { settings } = useSettings();
   const [collapsed, setCollapsed] = React.useState(false);
+  const isMobile = useIsMobile();
+  
+  // Auto-collapse sidebar on mobile
+  React.useEffect(() => {
+    if (isMobile) {
+      setCollapsed(true);
+    } else {
+      setCollapsed(false);
+    }
+  }, [isMobile]);
   
   const menuItems = [
     {

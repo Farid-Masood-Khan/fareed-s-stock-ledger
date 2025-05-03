@@ -20,13 +20,14 @@ interface NavbarProps {
   sidebarOpen: boolean;
 }
 
-interface ExtendedUser extends User {
+// Create a proper type for handling Supabase User with optional metadata
+type ExtendedUser = Omit<User, 'user_metadata'> & {
   user_metadata?: {
     name?: string;
     full_name?: string;
   };
   email?: string;
-}
+};
 
 const Navbar: React.FC<NavbarProps> = ({
   toggleSidebar,
@@ -58,7 +59,11 @@ const Navbar: React.FC<NavbarProps> = ({
   };
   
   const getUserInitials = () => {
-    const user = currentUser as ExtendedUser | null;
+    if (!currentUser) return "U";
+    
+    // Safely cast currentUser to ExtendedUser
+    const user = currentUser as unknown as ExtendedUser;
+    
     const userInfo = user?.user_metadata?.name || user?.user_metadata?.full_name || '';
     if (userInfo) {
       // Get initials from name
@@ -182,10 +187,14 @@ const Navbar: React.FC<NavbarProps> = ({
                 <DropdownMenuLabel className="px-3 py-2">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">
-                      {(currentUser as ExtendedUser).user_metadata?.name || (currentUser as ExtendedUser).user_metadata?.full_name || 
-                       ((currentUser as ExtendedUser).email ? (currentUser as ExtendedUser).email.split('@')[0] : 'User')}
+                      {((currentUser as unknown as ExtendedUser).user_metadata?.name || 
+                        (currentUser as unknown as ExtendedUser).user_metadata?.full_name || 
+                       ((currentUser as unknown as ExtendedUser).email ? 
+                        (currentUser as unknown as ExtendedUser).email.split('@')[0] : 'User'))}
                     </p>
-                    <p className="text-xs leading-none text-muted-foreground">{(currentUser as ExtendedUser).email || 'No email'}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {(currentUser as unknown as ExtendedUser).email || 'No email'}
+                    </p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="my-1" />

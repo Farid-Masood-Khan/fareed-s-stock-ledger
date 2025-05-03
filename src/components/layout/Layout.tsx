@@ -7,6 +7,7 @@ import { useSettings } from "@/context/SettingsContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -16,6 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const { settings } = useSettings();
+  const isMobile = useIsMobile();
 
   // Handle sidebar toggle
   const toggleSidebar = () => {
@@ -25,39 +27,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   // Close sidebar on mobile when route changes
   useEffect(() => {
     const handleRouteChange = () => {
-      if (window.innerWidth < 1024) {
+      if (isMobile) {
         setSidebarOpen(false);
       }
     };
     
     handleRouteChange();
     
-    // Listen for route changes
     return () => {
       handleRouteChange();
     };
-  }, [location.pathname]);
-  
-  // Handle window resize to auto-close sidebar on small screens
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setSidebarOpen(false);
-      }
-    };
-    
-    window.addEventListener('resize', handleResize);
-    
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  }, [location.pathname, isMobile]);
 
   // Page transition variants
   const pageVariants = {
     initial: {
       opacity: 0,
-      y: 10
+      y: 5
     },
     enter: {
       opacity: 1,
@@ -69,7 +55,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     },
     exit: {
       opacity: 0,
-      y: -10,
+      y: -5,
       transition: {
         duration: 0.2,
         ease: "easeIn"
@@ -99,7 +85,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 animate="enter"
                 exit="exit"
                 className={cn(
-                  "px-4 py-6 md:p-6 lg:p-8 min-h-[calc(100vh-64px)]",
+                  "px-3 py-4 sm:px-4 sm:py-6 md:p-6 lg:p-8 min-h-[calc(100vh-64px)]",
                   "flex-1 w-full mx-auto max-w-7xl"
                 )}
               >

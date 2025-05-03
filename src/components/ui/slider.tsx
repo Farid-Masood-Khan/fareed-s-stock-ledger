@@ -14,12 +14,22 @@ const Slider = React.forwardRef<
   SliderProps
 >(({ className, showTooltip = false, formatTooltip, tooltipClassName, ...props }, ref) => {
   const [hoveredThumb, setHoveredThumb] = React.useState<number | null>(null);
+  const [isMounted, setIsMounted] = React.useState(false);
+  
+  // Fix hydration issues with SSR
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
   
   const handleTooltipValue = (index: number): string => {
     if (!props.value) return "";
     const value = Array.isArray(props.value) ? props.value[index] : props.value;
     return formatTooltip ? formatTooltip(value) : `${value}`;
   };
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <SliderPrimitive.Root
@@ -68,7 +78,7 @@ const Slider = React.forwardRef<
               onMouseEnter={() => setHoveredThumb(0)}
               onMouseLeave={() => setHoveredThumb(null)}
             />
-            {showTooltip && hoveredThumb === 0 && (
+            {showTooltip && hoveredThumb === 0 && props.value !== undefined && (
               <div 
                 className={cn(
                   "absolute -top-8 rounded-md bg-gradient-to-r from-brand-600 to-brand-500 text-white px-2 py-1 text-xs animate-fade-in shadow-md",
