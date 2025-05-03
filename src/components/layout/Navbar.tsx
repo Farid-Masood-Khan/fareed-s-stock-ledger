@@ -13,10 +13,19 @@ import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { User } from '@supabase/supabase-js';
 
 interface NavbarProps {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
+}
+
+interface ExtendedUser extends User {
+  user_metadata?: {
+    name?: string;
+    full_name?: string;
+  };
+  email?: string;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
@@ -49,14 +58,15 @@ const Navbar: React.FC<NavbarProps> = ({
   };
   
   const getUserInitials = () => {
-    const userInfo = currentUser?.user_metadata?.name || currentUser?.user_metadata?.full_name || '';
+    const user = currentUser as ExtendedUser | null;
+    const userInfo = user?.user_metadata?.name || user?.user_metadata?.full_name || '';
     if (userInfo) {
       // Get initials from name
       return userInfo.split(' ').map((n: string) => n[0]).join('').toUpperCase();
     }
     
     // Fallback: extract from email if available
-    const emailStr = currentUser?.email || '';
+    const emailStr = user?.email || '';
     if (emailStr) {
       // Extract initials from email (first letter before @ and first letter of domain)
       const emailParts = emailStr.split('@');
@@ -172,10 +182,10 @@ const Navbar: React.FC<NavbarProps> = ({
                 <DropdownMenuLabel className="px-3 py-2">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">
-                      {currentUser.user_metadata?.name || currentUser.user_metadata?.full_name || 
-                       (currentUser.email ? currentUser.email.split('@')[0] : 'User')}
+                      {(currentUser as ExtendedUser).user_metadata?.name || (currentUser as ExtendedUser).user_metadata?.full_name || 
+                       ((currentUser as ExtendedUser).email ? (currentUser as ExtendedUser).email.split('@')[0] : 'User')}
                     </p>
-                    <p className="text-xs leading-none text-muted-foreground">{currentUser.email || 'No email'}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{(currentUser as ExtendedUser).email || 'No email'}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="my-1" />
