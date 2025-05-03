@@ -11,28 +11,22 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+
 interface NavbarProps {
   toggleSidebar: () => void;
   sidebarOpen: boolean;
 }
+
 const Navbar: React.FC<NavbarProps> = ({
   toggleSidebar,
   sidebarOpen
 }) => {
-  const {
-    settings,
-    theme,
-    toggleTheme
-  } = useSettings();
-  const {
-    currentUser,
-    logout
-  } = useStore();
-  const {
-    toast
-  } = useToast();
+  const { settings, theme, toggleTheme } = useSettings();
+  const { currentUser, logout } = useStore();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = React.useState(false);
+  
   const handleThemeToggle = () => {
     toggleTheme();
     toast({
@@ -41,6 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({
       duration: 2000
     });
   };
+  
   const handleLogout = () => {
     logout();
     toast({
@@ -50,10 +45,12 @@ const Navbar: React.FC<NavbarProps> = ({
     });
     navigate("/login");
   };
+  
   const getUserInitials = () => {
-    if (!currentUser?.name) return "U";
-    return currentUser.name.split(" ").map(name => name[0]).join("").toUpperCase().slice(0, 2);
+    if (!currentUser?.displayName) return "U";
+    return currentUser.displayName.split(" ").map(name => name[0]).join("").toUpperCase().slice(0, 2);
   };
+
   return <header className="bg-background border-b z-50 h-16 sticky top-0">
       <div className="px-4 h-full flex items-center justify-between">
         <div className="flex items-center">
@@ -119,15 +116,6 @@ const Navbar: React.FC<NavbarProps> = ({
             </Button>
           </motion.div>
           
-          {/* Settings */}
-          <motion.div whileHover={{
-          scale: 1.05
-        }} whileTap={{
-          scale: 0.95
-        }}>
-            
-          </motion.div>
-
           {/* User menu */}
           {currentUser && <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -184,4 +172,5 @@ const Navbar: React.FC<NavbarProps> = ({
       </Dialog>
     </header>;
 };
+
 export default Navbar;
