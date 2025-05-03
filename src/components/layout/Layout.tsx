@@ -80,7 +80,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className={`h-screen flex flex-col ${settings?.theme === "dark" ? "dark" : ""}`}>
       {/* Fixed top navbar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background shadow-sm border-b">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-transparent">
         <Navbar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       </div>
       
@@ -89,8 +89,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} currentPath={location.pathname} />
         
         {/* Main content with scroll */}
-        <div className="flex-1 flex flex-col h-full overflow-hidden w-full">
-          <ScrollArea className="flex-1">
+        <div className="flex-1 flex flex-col h-full overflow-hidden w-full bg-background/50">
+          <ScrollArea className="flex-1 scrollbar-custom">
             <AnimatePresence mode="wait">
               <motion.main
                 key={location.pathname}

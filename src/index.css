@@ -32,6 +32,15 @@ body {
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: 
+    radial-gradient(circle at 100% 0%, rgba(210, 230, 255, 0.3) 0%, transparent 30%),
+    radial-gradient(circle at 0% 100%, rgba(180, 200, 255, 0.2) 0%, transparent 30%);
+}
+
+.dark body {
+  background-image: 
+    radial-gradient(circle at 100% 0%, rgba(30, 50, 100, 0.15) 0%, transparent 30%),
+    radial-gradient(circle at 0% 100%, rgba(40, 60, 110, 0.1) 0%, transparent 30%);
 }
 
 #root {
@@ -58,4 +67,10 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Selection styling */
+::selection {
+  background-color: hsl(var(--brand-500) / 0.2);
+  color: hsl(var(--foreground));
 }

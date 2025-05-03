@@ -6,13 +6,14 @@ import {
   LayoutDashboard, Package, Receipt, User, Users, 
   CreditCard, PieChart, Settings, FileBarChart, 
   CircleDollarSign, ClipboardList, Info, Mail, X, 
-  ChevronLeft, ChevronRight
+  ChevronLeft, ChevronRight 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSettings } from "@/context/SettingsContext";
 import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -37,7 +38,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     {
       name: "Inventory",
       path: "/inventory",
-      icon: <Package className="h-5 w-5" />
+      icon: <Package className="h-5 w-5" />,
+      badge: "12"
     },
     {
       name: "Sales",
@@ -52,7 +54,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     {
       name: "Shopkeepers",
       path: "/shopkeepers",
-      icon: <Users className="h-5 w-5" />
+      icon: <Users className="h-5 w-5" />,
+      badge: "New"
     },
     {
       name: "Expenses",
@@ -72,8 +75,14 @@ const Sidebar: React.FC<SidebarProps> = ({
     {
       name: "Services",
       path: "/services",
-      icon: <ClipboardList className="h-5 w-5" />
-    },
+      icon: <ClipboardList className="h-5 w-5" />,
+      badge: "5"
+    }
+  ];
+
+  // Group menu items by category
+  const mainMenuItems = menuItems.slice(0, 9);
+  const secondaryMenuItems = [
     {
       name: "About",
       path: "/about",
@@ -91,10 +100,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   ];
 
-  // Group menu items by category
-  const mainMenuItems = menuItems.slice(0, 9);
-  const secondaryMenuItems = menuItems.slice(9);
-
   return (
     <>
       {/* Mobile overlay */}
@@ -103,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-40 bg-black bg-opacity-30 lg:hidden backdrop-blur-sm" 
+          className="fixed inset-0 z-40 bg-black/50 dark:bg-black/70 lg:hidden backdrop-blur-sm" 
           onClick={toggleSidebar} 
         />
       )}
@@ -117,33 +122,33 @@ const Sidebar: React.FC<SidebarProps> = ({
         }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
         className={cn(
-          "fixed inset-y-0 left-0 z-50 bg-card border-r overflow-hidden pt-20 lg:translate-x-0 lg:static lg:z-0 shadow-sm",
+          "fixed inset-y-0 left-0 z-50 bg-card/95 dark:bg-card/90 border-r overflow-hidden pt-20 lg:translate-x-0 lg:static lg:z-0 shadow-md backdrop-blur-sm",
           settings?.theme === "dark" ? "dark border-border/30" : "border-border/60"
         )}
       >
         <div className="flex items-center justify-between px-4 py-2 lg:hidden">
           <h2 className="text-lg font-semibold text-foreground/90">Stock Ledger</h2>
           <Button variant="ghost" size="sm" onClick={toggleSidebar} className="rounded-full h-8 w-8 p-0">
-            <X className="h-5 w-5" />
+            <X className="h-4.5 w-4.5" />
           </Button>
         </div>
 
         <ScrollArea className="h-[calc(100%-60px)]">
           <div className="px-3 py-4 flex flex-col min-h-[calc(100vh-120px)]">
             {/* Main navigation */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               {mainMenuItems.map((item) => (
                 <Tooltip key={item.path} delayDuration={collapsed ? 300 : 1000}>
                   <TooltipTrigger asChild>
                     <NavLink
                       to={item.path}
                       className={({ isActive }) => cn(
-                        "flex items-center rounded-md transition-all duration-200",
+                        "flex items-center rounded-lg transition-all duration-200",
                         collapsed 
                           ? "justify-center p-2.5" 
                           : "px-3 py-2.5 text-sm font-medium",
                         isActive 
-                          ? "bg-primary/10 text-primary font-medium shadow-sm" 
+                          ? "bg-gradient-to-r from-brand-500/20 to-brand-500/10 text-brand-600 dark:text-brand-400 font-medium shadow-sm border-l-2 border-l-brand-500" 
                           : "hover:bg-muted/60 text-foreground/80 hover:text-foreground"
                       )}
                       onClick={() => {
@@ -159,13 +164,29 @@ const Sidebar: React.FC<SidebarProps> = ({
                         )}>
                           {item.icon}
                         </span>
-                        {!collapsed && <span className="truncate">{item.name}</span>}
+                        {!collapsed && (
+                          <div className="flex justify-between items-center w-full">
+                            <span className="truncate">{item.name}</span>
+                            {item.badge && (
+                              <Badge variant="outline" className="ml-2 h-5 bg-brand-500/10 text-brand-600 border-brand-500/30 text-xs">
+                                {item.badge}
+                              </Badge>
+                            )}
+                          </div>
+                        )}
                       </span>
                     </NavLink>
                   </TooltipTrigger>
                   {collapsed && (
-                    <TooltipContent side="right" sideOffset={10} className="bg-card text-foreground border border-border shadow-md">
-                      {item.name}
+                    <TooltipContent side="right" sideOffset={10} className="bg-card/95 text-foreground border border-border shadow-md backdrop-blur-sm">
+                      <span className="flex items-center gap-2">
+                        {item.name}
+                        {item.badge && (
+                          <Badge variant="outline" className="h-5 bg-brand-500/10 text-brand-600 border-brand-500/30 text-xs">
+                            {item.badge}
+                          </Badge>
+                        )}
+                      </span>
                     </TooltipContent>
                   )}
                 </Tooltip>
@@ -173,22 +194,22 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
             
             {/* Divider */}
-            <div className={cn("my-4 border-t border-border/50", collapsed && "mx-2")} />
+            <div className={cn("my-3 border-t border-border/50", collapsed && "mx-2")} />
 
             {/* Secondary navigation */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               {secondaryMenuItems.map((item) => (
                 <Tooltip key={item.path} delayDuration={collapsed ? 300 : 1000}>
                   <TooltipTrigger asChild>
                     <NavLink
                       to={item.path}
                       className={({ isActive }) => cn(
-                        "flex items-center rounded-md transition-all duration-200",
+                        "flex items-center rounded-lg transition-all duration-200",
                         collapsed 
                           ? "justify-center p-2.5" 
                           : "px-3 py-2.5 text-sm font-medium",
                         isActive 
-                          ? "bg-primary/10 text-primary font-medium shadow-sm" 
+                          ? "bg-gradient-to-r from-brand-500/20 to-brand-500/10 text-brand-600 dark:text-brand-400 font-medium shadow-sm border-l-2 border-l-brand-500" 
                           : "hover:bg-muted/60 text-foreground/80 hover:text-foreground"
                       )}
                       onClick={() => {
@@ -209,7 +230,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </NavLink>
                   </TooltipTrigger>
                   {collapsed && (
-                    <TooltipContent side="right" sideOffset={10} className="bg-card text-foreground border border-border shadow-md">
+                    <TooltipContent side="right" sideOffset={10} className="bg-card/95 text-foreground border border-border shadow-md backdrop-blur-sm">
                       {item.name}
                     </TooltipContent>
                   )}
@@ -223,7 +244,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 variant="ghost"
                 size="sm"
                 className={cn(
-                  "w-full justify-center rounded-md hover:bg-muted/60",
+                  "w-full justify-center rounded-lg hover:bg-muted/60",
                   !collapsed && "justify-between"
                 )}
                 onClick={() => setCollapsed(!collapsed)}

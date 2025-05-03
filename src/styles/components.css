@@ -43,11 +43,21 @@
   }
   
   .hover-card {
-    @apply transition-all duration-300;
+    @apply transition-all duration-300 rounded-xl border border-border bg-card shadow-sm;
   }
   
   .hover-card:hover {
-    @apply shadow-lg transform -translate-y-1;
+    @apply shadow-md transform -translate-y-1 border-brand-200/50;
+  }
+  
+  /* Modern card with hover effect */
+  .modern-card {
+    @apply rounded-xl bg-card border border-border/60 shadow-sm hover:shadow-md transition-all duration-300 hover:border-brand-200/50 overflow-hidden;
+  }
+
+  /* Dashboard card */
+  .dashboard-card {
+    @apply rounded-xl border border-border/60 bg-card p-5 shadow-sm hover:shadow-md transition-all duration-300 hover:border-brand-200/50;
   }
   
   /* Button styles */
@@ -63,6 +73,18 @@
     @apply scale-95;
   }
   
+  .btn-primary {
+    @apply bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-medium py-2 px-4 rounded-md shadow-sm transition-all;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 font-medium py-2 px-4 rounded-md shadow-sm transition-all;
+  }
+  
+  .btn-outline {
+    @apply border border-brand-500/50 text-brand-600 hover:bg-brand-500/10 font-medium py-2 px-4 rounded-md shadow-sm transition-all;
+  }
+  
   /* Custom badge */
   .badge {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
@@ -76,14 +98,34 @@
     @apply bg-secondary text-secondary-foreground;
   }
   
+  .badge-success {
+    @apply bg-green-100 text-green-800 border border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800/30;
+  }
+
+  .badge-warning {
+    @apply bg-yellow-100 text-yellow-800 border border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800/30;
+  }
+
+  .badge-danger {
+    @apply bg-red-100 text-red-800 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800/30;
+  }
+
+  .badge-info {
+    @apply bg-blue-100 text-blue-800 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800/30;
+  }
+  
   /* Custom divider */
   .divider {
     @apply h-px w-full bg-border my-4;
   }
+
+  .divider-vertical {
+    @apply w-px h-full bg-border mx-4;
+  }
   
   /* Table improvements */
   .table-container {
-    @apply w-full overflow-x-auto rounded-lg border border-border;
+    @apply w-full overflow-x-auto rounded-xl border border-border bg-card shadow-sm;
   }
   
   .data-table {
@@ -132,11 +174,6 @@
     @apply bg-black/30 border-white/10;
   }
   
-  /* Gradient text */
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-brand-700 to-brand-500;
-  }
-  
   /* Responsive padding */
   .card-responsive {
     @apply p-4 sm:p-6;
@@ -144,7 +181,7 @@
   
   /* Dashboard stats card */
   .stats-card {
-    @apply rounded-lg border bg-card p-5 text-card-foreground shadow-sm transition-all hover:shadow;
+    @apply rounded-xl border bg-card p-5 text-card-foreground shadow-sm transition-all hover:shadow-md hover:border-brand-200/50;
   }
   
   .stats-card-header {
@@ -168,12 +205,12 @@
   }
   
   .stats-card-icon {
-    @apply rounded-full bg-primary/10 p-2.5 text-primary;
+    @apply rounded-full bg-brand-100 dark:bg-brand-500/20 p-2.5 text-brand-600 dark:text-brand-400;
   }
   
   /* Chart container */
   .chart-container {
-    @apply rounded-lg border bg-card p-6 shadow-sm;
+    @apply rounded-xl border bg-card p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:border-brand-200/50;
   }
   
   .chart-header {
@@ -190,7 +227,7 @@
   
   /* Dialog enhancements */
   .dialog-content {
-    @apply sm:max-w-[425px] rounded-lg shadow-lg border-border bg-background;
+    @apply sm:max-w-[425px] rounded-xl shadow-lg border-border bg-background;
   }
   
   .dialog-header {
@@ -215,10 +252,10 @@
   }
   
   .form-input {
-    @apply w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:border-input;
+    @apply w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-input;
   }
   
   .form-select {
-    @apply w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:border-input;
+    @apply w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-input;
   }
 }

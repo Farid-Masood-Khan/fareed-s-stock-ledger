@@ -18,17 +18,17 @@ export default {
     extend: {
       colors: {
         brand: {
-          50: 'hsl(var(--brand-50))',
-          100: 'hsl(var(--brand-100))',
-          200: 'hsl(var(--brand-200))',
-          300: 'hsl(var(--brand-300))',
-          400: 'hsl(var(--brand-400))',
-          500: 'hsl(var(--brand-500))',
-          600: 'hsl(var(--brand-600))',
-          700: 'hsl(var(--brand-700))',
-          800: 'hsl(var(--brand-800))',
-          900: 'hsl(var(--brand-900))',
-          950: 'hsl(var(--brand-950))',
+          50: 'hsl(210, 100%, 97%)',
+          100: 'hsl(210, 100%, 92%)',
+          200: 'hsl(210, 94%, 84%)',
+          300: 'hsl(210, 94%, 74%)',
+          400: 'hsl(210, 94%, 67%)',
+          500: 'hsl(210, 94%, 57%)',
+          600: 'hsl(210, 94%, 45%)',
+          700: 'hsl(210, 100%, 35%)',
+          800: 'hsl(211, 100%, 30%)',
+          900: 'hsl(212, 100%, 25%)',
+          950: 'hsl(224, 100%, 15%)',
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -90,6 +90,14 @@ export default {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-5px)' },
         },
+        "float": {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        "shimmer": {
+          '0%': { backgroundPosition: '-1000px 0' },
+          '100%': { backgroundPosition: '1000px 0' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -97,6 +105,8 @@ export default {
         "pulse-subtle": "pulse 3s infinite",
         "spin-slow": "spin-slow 8s linear infinite",
         "bounce-subtle": "bounce-subtle 2s infinite",
+        "float": "float 6s ease-in-out infinite",
+        "shimmer": "shimmer 2s infinite linear",
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
@@ -106,7 +116,15 @@ export default {
       boxShadow: {
         'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
         'strong': '0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        'card': '0px 4px 20px rgba(0, 0, 0, 0.05)',
+        'glow': '0 0 15px rgba(66, 153, 225, 0.5)',
       },
+      fontSize: {
+        '4.5': '1.125rem',
+      },
+      spacing: {
+        '4.5': '1.125rem',
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],
