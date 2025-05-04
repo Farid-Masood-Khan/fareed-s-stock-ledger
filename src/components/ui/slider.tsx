@@ -7,12 +7,14 @@ interface SliderProps extends React.ComponentPropsWithoutRef<typeof SliderPrimit
   showTooltip?: boolean;
   formatTooltip?: (value: number) => string;
   tooltipClassName?: string;
+  label?: string;
+  ariaValueText?: (value: number) => string;
 }
 
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   SliderProps
->(({ className, showTooltip = false, formatTooltip, tooltipClassName, ...props }, ref) => {
+>(({ className, showTooltip = false, formatTooltip, tooltipClassName, label, ariaValueText, ...props }, ref) => {
   const [hoveredThumb, setHoveredThumb] = React.useState<number | null>(null);
   const [isMounted, setIsMounted] = React.useState(false);
   
@@ -27,6 +29,12 @@ const Slider = React.forwardRef<
     return formatTooltip ? formatTooltip(value) : `${value}`;
   };
 
+  const getValueText = (index: number): string => {
+    if (!props.value) return "";
+    const value = Array.isArray(props.value) ? props.value[index] : props.value;
+    return ariaValueText ? ariaValueText(value) : `${value}`;
+  };
+
   if (!isMounted) {
     return null;
   }
@@ -38,9 +46,10 @@ const Slider = React.forwardRef<
         "relative flex w-full touch-none select-none items-center",
         className
       )}
+      aria-label={label}
       {...props}
     >
-      <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-muted/70 dark:bg-muted/40 shadow-inner">
+      <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-muted/70 dark:bg-muted/40 shadow-inner" aria-hidden="true">
         <SliderPrimitive.Range className="absolute h-full bg-gradient-to-r from-brand-500 to-brand-600 dark:from-brand-500 dark:to-brand-400" />
       </SliderPrimitive.Track>
       {Array.isArray(props.value) ? 
@@ -53,6 +62,9 @@ const Slider = React.forwardRef<
               )}
               onMouseEnter={() => setHoveredThumb(index)}
               onMouseLeave={() => setHoveredThumb(null)}
+              onFocus={() => setHoveredThumb(index)}
+              onBlur={() => setHoveredThumb(null)}
+              aria-valuetext={getValueText(index)}
             />
             {showTooltip && hoveredThumb === index && (
               <div 
@@ -63,6 +75,7 @@ const Slider = React.forwardRef<
                 style={{
                   left: `calc(${(props.value[index] - (props.min || 0)) / ((props.max || 100) - (props.min || 0)) * 100}% - 12px)`
                 }}
+                role="tooltip"
               >
                 {handleTooltipValue(index)}
               </div>
@@ -77,6 +90,9 @@ const Slider = React.forwardRef<
               )}
               onMouseEnter={() => setHoveredThumb(0)}
               onMouseLeave={() => setHoveredThumb(null)}
+              onFocus={() => setHoveredThumb(0)}
+              onBlur={() => setHoveredThumb(null)}
+              aria-valuetext={getValueText(0)}
             />
             {showTooltip && hoveredThumb === 0 && props.value !== undefined && (
               <div 
@@ -87,6 +103,7 @@ const Slider = React.forwardRef<
                 style={{
                   left: `calc(${((props.value as number) - (props.min || 0)) / ((props.max || 100) - (props.min || 0)) * 100}% - 12px)`
                 }}
+                role="tooltip"
               >
                 {handleTooltipValue(0)}
               </div>

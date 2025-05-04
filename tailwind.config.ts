@@ -63,6 +63,24 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(142, 71%, 45%)",
+          light: "hsl(142, 71%, 90%)",
+          dark: "hsl(142, 71%, 29%)",
+          foreground: "hsl(0, 0%, 100%)",
+        },
+        warning: {
+          DEFAULT: "hsl(48, 96%, 53%)",
+          light: "hsl(48, 96%, 93%)",
+          dark: "hsl(40, 80%, 45%)",
+          foreground: "hsl(0, 0%, 10%)",
+        },
+        info: {
+          DEFAULT: "hsl(200, 98%, 50%)",
+          light: "hsl(200, 98%, 92%)",
+          dark: "hsl(200, 98%, 35%)",
+          foreground: "hsl(0, 0%, 100%)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -98,6 +116,14 @@ export default {
           '0%': { backgroundPosition: '-1000px 0' },
           '100%': { backgroundPosition: '1000px 0' },
         },
+        "fade-in": {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+        "slide-in": {
+          from: { transform: 'translateY(10px)', opacity: '0' },
+          to: { transform: 'translateY(0)', opacity: '1' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -107,6 +133,8 @@ export default {
         "bounce-subtle": "bounce-subtle 2s infinite",
         "float": "float 6s ease-in-out infinite",
         "shimmer": "shimmer 2s infinite linear",
+        "fade-in": "fade-in 0.3s ease-out",
+        "slide-in": "slide-in 0.3s ease-out",
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

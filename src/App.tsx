@@ -23,6 +23,8 @@ import { StoreProvider } from "./context/StoreContext";
 import { SettingsProvider } from "./context/SettingsContext";
 import AuthWrapper from "./components/auth/AuthWrapper";
 import { AnimatePresence } from "framer-motion";
+import ErrorBoundary from "./components/errors/ErrorBoundary";
+import { LoadingProvider } from "./hooks/use-loading-state";
 
 // Create a new QueryClient with better error handling and security
 const queryClient = new QueryClient({
@@ -64,6 +66,13 @@ const queryClient = new QueryClient({
   },
 });
 
+// Skip link for keyboard accessibility
+const SkipToContent = () => (
+  <a href="#main-content" className="skip-link">
+    Skip to content
+  </a>
+);
+
 // Animation wrapper for route transitions
 function AnimatedRoutes() {
   const location = useLocation();
@@ -71,24 +80,80 @@ function AnimatedRoutes() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={
+          <ErrorBoundary>
+            <LoginPage />
+          </ErrorBoundary>
+        } />
         <Route path="*" element={
           <AuthWrapper>
             <Layout>
               <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/inventory" element={<Inventory />} />
-                <Route path="/sales" element={<Sales />} />
-                <Route path="/customers" element={<CustomersPage />} />
-                <Route path="/shopkeepers" element={<ShopkeepersPage />} />
-                <Route path="/reports" element={<ReportsPage />} />
-                <Route path="/financial" element={<FinancialPage />} />
-                <Route path="/services" element={<ServicesPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/expenses" element={<ExpensesPage />} />
-                <Route path="*" element={<NotFound />} />
+                <Route path="/" element={
+                  <ErrorBoundary>
+                    <Dashboard />
+                  </ErrorBoundary>
+                } />
+                <Route path="/inventory" element={
+                  <ErrorBoundary>
+                    <Inventory />
+                  </ErrorBoundary>
+                } />
+                <Route path="/sales" element={
+                  <ErrorBoundary>
+                    <Sales />
+                  </ErrorBoundary>
+                } />
+                <Route path="/customers" element={
+                  <ErrorBoundary>
+                    <CustomersPage />
+                  </ErrorBoundary>
+                } />
+                <Route path="/shopkeepers" element={
+                  <ErrorBoundary>
+                    <ShopkeepersPage />
+                  </ErrorBoundary>
+                } />
+                <Route path="/reports" element={
+                  <ErrorBoundary>
+                    <ReportsPage />
+                  </ErrorBoundary>
+                } />
+                <Route path="/financial" element={
+                  <ErrorBoundary>
+                    <FinancialPage />
+                  </ErrorBoundary>
+                } />
+                <Route path="/services" element={
+                  <ErrorBoundary>
+                    <ServicesPage />
+                  </ErrorBoundary>
+                } />
+                <Route path="/about" element={
+                  <ErrorBoundary>
+                    <AboutPage />
+                  </ErrorBoundary>
+                } />
+                <Route path="/contact" element={
+                  <ErrorBoundary>
+                    <ContactPage />
+                  </ErrorBoundary>
+                } />
+                <Route path="/settings" element={
+                  <ErrorBoundary>
+                    <SettingsPage />
+                  </ErrorBoundary>
+                } />
+                <Route path="/expenses" element={
+                  <ErrorBoundary>
+                    <ExpensesPage />
+                  </ErrorBoundary>
+                } />
+                <Route path="*" element={
+                  <ErrorBoundary>
+                    <NotFound />
+                  </ErrorBoundary>
+                } />
               </Routes>
             </Layout>
           </AuthWrapper>
@@ -99,19 +164,24 @@ function AnimatedRoutes() {
 }
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <SettingsProvider>
-        <StoreProvider>
-          <Toaster />
-          <Sonner position="top-right" closeButton={true} expand={false} />
-          <BrowserRouter>
-            <AnimatedRoutes />
-          </BrowserRouter>
-        </StoreProvider>
-      </SettingsProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <SettingsProvider>
+          <LoadingProvider>
+            <StoreProvider>
+              <SkipToContent />
+              <Toaster />
+              <Sonner position="top-right" closeButton={true} expand={false} richColors />
+              <BrowserRouter>
+                <AnimatedRoutes />
+              </BrowserRouter>
+            </StoreProvider>
+          </LoadingProvider>
+        </SettingsProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

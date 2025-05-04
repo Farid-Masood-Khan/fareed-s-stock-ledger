@@ -26,17 +26,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   
   // Close sidebar on mobile when route changes
   useEffect(() => {
-    const handleRouteChange = () => {
-      if (isMobile) {
-        setSidebarOpen(false);
-      }
-    };
-    
-    handleRouteChange();
-    
-    return () => {
-      handleRouteChange();
-    };
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
   }, [location.pathname, isMobile]);
 
   // Page transition variants
@@ -64,14 +56,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
   
   return (
-    <div className={`h-screen flex flex-col ${settings?.theme === "dark" ? "dark" : ""}`}>
+    <div 
+      className={`h-screen flex flex-col ${settings?.theme === "dark" ? "dark" : ""}`}
+      data-theme={settings?.theme}
+      aria-live="polite"
+    >
       {/* Fixed top navbar */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-transparent">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-transparent">
         <Navbar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-      </div>
+      </header>
       
       {/* Main content area with sidebar */}
-      <div className="flex flex-1 overflow-hidden pt-16"> {/* Add pt-16 to account for fixed navbar */}
+      <div className="flex flex-1 overflow-hidden pt-16"> {/* pt-16 to account for fixed navbar */}
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} currentPath={location.pathname} />
         
         {/* Main content with scroll */}
@@ -88,6 +84,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   "px-3 py-4 sm:px-4 sm:py-6 md:p-6 lg:p-8 min-h-[calc(100vh-64px)]",
                   "flex-1 w-full mx-auto max-w-7xl"
                 )}
+                role="main"
+                aria-label={`Page: ${location.pathname.substring(1) || 'Dashboard'}`}
               >
                 {children}
               </motion.main>

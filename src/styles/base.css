@@ -62,9 +62,36 @@
     --table-border: 214.3 31.8% 91.4%;
     
     /* Font size variables */
-    --font-size-base: 16px;
-    --font-size-small: 14px;
-    --font-size-large: 18px;
+    --font-size-xs: 0.75rem;    /* 12px */
+    --font-size-sm: 0.875rem;   /* 14px */
+    --font-size-base: 1rem;     /* 16px */
+    --font-size-lg: 1.125rem;   /* 18px */
+    --font-size-xl: 1.25rem;    /* 20px */
+    --font-size-2xl: 1.5rem;    /* 24px */
+    --font-size-3xl: 1.875rem;  /* 30px */
+    --font-size-4xl: 2.25rem;   /* 36px */
+    
+    /* Font weight variables */
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    /* Line height variables */
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.75;
+    
+    /* Spacing variables */
+    --spacing-1: 0.25rem;   /* 4px */
+    --spacing-2: 0.5rem;    /* 8px */
+    --spacing-3: 0.75rem;   /* 12px */
+    --spacing-4: 1rem;      /* 16px */
+    --spacing-6: 1.5rem;    /* 24px */
+    --spacing-8: 2rem;      /* 32px */
+    --spacing-12: 3rem;     /* 48px */
+    --spacing-16: 4rem;     /* 64px */
   }
 
   .dark {
@@ -141,9 +168,13 @@
     @apply transition-all duration-300 hover:shadow-md hover:-translate-y-1;
   }
   
-  /* Font size classes */
+  /* Font size classes using CSS variables */
+  .text-xs {
+    font-size: var(--font-size-xs);
+  }
+  
   .text-sm {
-    font-size: var(--font-size-small);
+    font-size: var(--font-size-sm);
   }
   
   .text-base {
@@ -151,12 +182,92 @@
   }
   
   .text-lg {
-    font-size: var(--font-size-large);
+    font-size: var(--font-size-lg);
+  }
+  
+  .text-xl {
+    font-size: var(--font-size-xl);
+  }
+  
+  .text-2xl {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .text-3xl {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .text-4xl {
+    font-size: var(--font-size-4xl);
+  }
+  
+  /* Font weight classes using CSS variables */
+  .font-light {
+    font-weight: var(--font-weight-light);
+  }
+  
+  .font-normal {
+    font-weight: var(--font-weight-normal);
+  }
+  
+  .font-medium {
+    font-weight: var(--font-weight-medium);
+  }
+  
+  .font-semibold {
+    font-weight: var(--font-weight-semibold);
+  }
+  
+  .font-bold {
+    font-weight: var(--font-weight-bold);
+  }
+  
+  /* Line height classes using CSS variables */
+  .leading-tight {
+    line-height: var(--line-height-tight);
+  }
+  
+  .leading-normal {
+    line-height: var(--line-height-normal);
+  }
+  
+  .leading-relaxed {
+    line-height: var(--line-height-relaxed);
   }
   
   /* Shimmer effect for loading states */
   .shimmer {
     @apply bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:1000px_100%] animate-shimmer;
+  }
+  
+  /* Responsive focus handling */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2;
+  }
+  
+  /* Heading styles */
+  h1, .h1 {
+    @apply text-3xl font-bold md:text-4xl tracking-tight;
+  }
+  
+  h2, .h2 {
+    @apply text-2xl font-semibold md:text-3xl;
+  }
+  
+  h3, .h3 {
+    @apply text-xl font-semibold md:text-2xl;
+  }
+  
+  h4, .h4 {
+    @apply text-lg font-medium md:text-xl;
+  }
+  
+  h5, .h5 {
+    @apply text-base font-medium md:text-lg;
+  }
+  
+  h6, .h6 {
+    @apply text-sm font-medium md:text-base;
   }
 }
 
@@ -189,4 +300,28 @@
 
 .dark .scrollbar-custom::-webkit-scrollbar-thumb:hover {
   background-color: rgba(100, 100, 100, 0.7);
+}
+
+/* Skiplink for keyboard navigation */
+.skip-link {
+  @apply sr-only focus:not-sr-only fixed top-0 left-0 z-50 bg-white text-brand-600 px-4 py-2 m-3 rounded-md shadow-md;
+}
+
+/* Responsive visually hidden text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Improved focus for keyboard users */
+.focus-visible:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
 }

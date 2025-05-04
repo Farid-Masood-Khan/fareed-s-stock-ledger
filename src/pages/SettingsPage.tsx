@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { 
   Moon, Sun, Type, Volume2, VolumeX, Zap, ZapOff, Save, Share2, 
-  Palette, RotateCcw, Lock, Database, Bell, ShieldCheck, User, Globe
+  Palette, RotateCcw, Lock, Database, Bell, ShieldCheck, User, Globe, AlertTriangle
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,43 +17,70 @@ import { useNotificationSound } from "@/hooks/use-notification-sound";
 import { useToast } from "@/hooks/use-toast";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose
+} from "@/components/ui/dialog";
+import { useComponentLoading } from "@/hooks/use-loading-state";
+import { cn } from "@/lib/utils";
 
 const SettingsPage = () => {
   const {
-    theme,
-    toggleTheme,
-    fontSize,
-    setFontSize,
-    isMoneyHidden,
-    toggleMoneyVisibility,
-    soundEnabled,
-    toggleSoundEnabled,
-    animationsEnabled,
-    toggleAnimationsEnabled
+    settings,
+    updateSetting,
+    saveSettings,
+    resetSettings,
+    hasChanges,
+    isLoading: isSettingsLoading
   } = useSettings();
   
   const { playSound } = useNotificationSound();
   const { toast } = useToast();
+  const { isLoading, withLoading } = useComponentLoading();
   
-  // State for volume slider
-  const [volume, setVolume] = useState<number[]>([70]);
-  // State for tracking if settings were changed
-  const [settingsChanged, setSettingsChanged] = useState(false);
-  // State for desktop notifications
-  const [desktopNotifications, setDesktopNotifications] = useState(true);
-  // State for autolock feature
-  const [autoLock, setAutoLock] = useState(true);
-  // State for data collection consent
-  const [dataCollection, setDataCollection] = useState(true);
-
-  // Effect to track settings changes
-  useEffect(() => {
-    setSettingsChanged(true);
-  }, [theme, fontSize, isMoneyHidden, soundEnabled, animationsEnabled, volume, desktopNotifications, autoLock, dataCollection]);
+  // State for confirmation dialogs
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  
+  // Handle save settings
+  const handleSaveSettings = async () => {
+    if (!hasChanges) return;
+    
+    withLoading(saveSettings())
+      .catch(error => {
+        console.error("Failed to save settings:", error);
+        toast({
+          title: "Error saving settings",
+          description: "Your preferences could not be saved. Please try again.",
+          variant: "destructive"
+        });
+      });
+  };
+  
+  // Handle reset settings
+  const handleResetSettings = async () => {
+    withLoading(resetSettings())
+      .then(() => {
+        setIsResetDialogOpen(false);
+      })
+      .catch(error => {
+        console.error("Failed to reset settings:", error);
+        toast({
+          title: "Error resetting settings",
+          description: "Your settings could not be reset. Please try again.",
+          variant: "destructive"
+        });
+      });
+  };
 
   const handleSoundToggle = () => {
-    toggleSoundEnabled();
-    if (!soundEnabled) {
+    updateSetting("soundEnabled", !settings.soundEnabled);
+    if (!settings.soundEnabled) {
       // Play a sound immediately when enabling sounds
       setTimeout(() => playSound('success'), 100);
       toast({
@@ -70,31 +97,7 @@ const SettingsPage = () => {
 
   // Handler for volume change
   const handleVolumeChange = (newValue: number[]) => {
-    setVolume(newValue);
-    setSettingsChanged(true);
-  };
-
-  // Mock functions for saving settings
-  const handleSaveSettings = () => {
-    toast({
-      title: "Settings saved",
-      description: "Your preferences have been saved successfully."
-    });
-    playSound('success');
-    setSettingsChanged(false);
-  };
-
-  const handleResetSettings = () => {
-    // Confirm reset with user
-    if (confirm("Are you sure you want to reset all settings to their default values?")) {
-      toast({
-        title: "Settings reset",
-        description: "All settings have been reset to their default values.",
-        variant: "destructive"
-      });
-      playSound('alert');
-      setSettingsChanged(false);
-    }
+    updateSetting("volume", newValue[0]);
   };
 
   const cardVariants = {
@@ -117,24 +120,53 @@ const SettingsPage = () => {
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={handleResetSettings} 
+            onClick={() => setIsResetDialogOpen(true)} 
             className="flex items-center gap-2"
-            disabled={!settingsChanged}
+            disabled={!hasChanges || isLoading}
           >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className={cn("h-4 w-4", isLoading && "animate-spin")} />
             Reset
           </Button>
           <Button 
             size="sm" 
             onClick={handleSaveSettings} 
-            className={`flex items-center gap-2 ${settingsChanged ? 'bg-brand-600 hover:bg-brand-700' : 'bg-muted text-muted-foreground'}`}
-            disabled={!settingsChanged}
+            className={cn(
+              "flex items-center gap-2",
+              hasChanges ? 'bg-brand-600 hover:bg-brand-700' : 'bg-muted text-muted-foreground'
+            )}
+            disabled={!hasChanges || isLoading}
+            isLoading={isLoading}
+            loadingText="Saving..."
           >
             <Save className="h-4 w-4" />
             Save Changes
           </Button>
         </div>
       </div>
+
+      {hasChanges && (
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }} 
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="bg-brand-50 dark:bg-brand-900/20 border border-brand-200 dark:border-brand-800/30 rounded-lg p-4 mb-6 flex items-center justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-brand-600 dark:text-brand-400" />
+            <p className="text-sm text-brand-700 dark:text-brand-300">
+              You have unsaved changes. Don't forget to save before leaving.
+            </p>
+          </div>
+          <Button 
+            size="sm" 
+            variant="soft"
+            onClick={handleSaveSettings}
+            isLoading={isLoading}
+          >
+            Save now
+          </Button>
+        </motion.div>
+      )}
 
       <Tabs defaultValue="appearance" className="w-full">
         <TabsList className="mb-4 w-full sm:w-auto flex flex-wrap justify-start">
@@ -178,10 +210,11 @@ const SettingsPage = () => {
                   <Button 
                     variant="outline" 
                     size="icon" 
-                    onClick={toggleTheme} 
-                    className={`transition-all h-10 w-10 ${theme === "dark" ? "bg-gray-800 text-yellow-400" : "bg-blue-50 text-blue-900"}`}
+                    onClick={() => updateSetting("theme", settings.theme === "light" ? "dark" : "light")} 
+                    className={`transition-all h-10 w-10 ${settings.theme === "dark" ? "bg-gray-800 text-yellow-400" : "bg-blue-50 text-blue-900"}`}
+                    aria-label={settings.theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
                   >
-                    {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+                    {settings.theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
                   </Button>
                 </div>
                 
@@ -195,8 +228,8 @@ const SettingsPage = () => {
                     </div>
                   </div>
                   <RadioGroup 
-                    value={fontSize} 
-                    onValueChange={value => setFontSize(value as "small" | "medium" | "large")} 
+                    value={settings.fontSize} 
+                    onValueChange={(value) => updateSetting("fontSize", value as "small" | "medium" | "large")} 
                     className="flex flex-wrap gap-4"
                   >
                     <div className="flex items-center space-x-2">
@@ -225,17 +258,17 @@ const SettingsPage = () => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <Switch 
-                      checked={animationsEnabled} 
-                      onCheckedChange={toggleAnimationsEnabled} 
+                      checked={settings.animationsEnabled} 
+                      onCheckedChange={(checked) => updateSetting("animationsEnabled", checked)} 
                       id="animations-toggle" 
                     />
                     <Label htmlFor="animations-toggle" className="flex items-center gap-2 cursor-pointer">
-                      {animationsEnabled ? (
+                      {settings.animationsEnabled ? (
                         <Zap className="h-5 w-5 text-yellow-500" />
                       ) : (
                         <ZapOff className="h-5 w-5" />
                       )}
-                      <span>{animationsEnabled ? "Enabled" : "Disabled"}</span>
+                      <span>{settings.animationsEnabled ? "Enabled" : "Disabled"}</span>
                     </Label>
                   </div>
                 </div>
@@ -266,17 +299,17 @@ const SettingsPage = () => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <Switch 
-                      checked={soundEnabled} 
+                      checked={settings.soundEnabled} 
                       onCheckedChange={handleSoundToggle} 
                       id="sound-toggle" 
                     />
                     <Label htmlFor="sound-toggle" className="flex items-center gap-2 cursor-pointer">
-                      {soundEnabled ? (
+                      {settings.soundEnabled ? (
                         <Volume2 className="h-5 w-5 text-green-500" />
                       ) : (
                         <VolumeX className="h-5 w-5" />
                       )}
-                      <span>{soundEnabled ? "Enabled" : "Disabled"}</span>
+                      <span>{settings.soundEnabled ? "Enabled" : "Disabled"}</span>
                     </Label>
                   </div>
                 </div>
@@ -286,16 +319,17 @@ const SettingsPage = () => {
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                     <Label className="text-base">Sound Volume</Label>
-                    <span className="text-sm text-muted-foreground">{volume[0]}%</span>
+                    <span className="text-sm text-muted-foreground">{settings.volume}%</span>
                   </div>
                   <div className="px-1">
                     <Slider 
-                      value={volume} 
+                      value={[settings.volume]} 
                       onValueChange={handleVolumeChange} 
                       max={100} 
                       step={5} 
-                      className={soundEnabled ? "" : "opacity-50"} 
-                      disabled={!soundEnabled} 
+                      className={settings.soundEnabled ? "" : "opacity-50"} 
+                      disabled={!settings.soundEnabled} 
+                      aria-label="Sound volume"
                     />
                   </div>
                   <div className="flex justify-between text-xs text-muted-foreground mt-1">
@@ -317,11 +351,11 @@ const SettingsPage = () => {
                   <div className="flex items-center space-x-3">
                     <Switch 
                       id="desktop-notifications" 
-                      checked={desktopNotifications}
-                      onCheckedChange={setDesktopNotifications}
+                      checked={settings.desktopNotifications}
+                      onCheckedChange={(checked) => updateSetting("desktopNotifications", checked)}
                     />
                     <Label htmlFor="desktop-notifications" className="cursor-pointer">
-                      {desktopNotifications ? "Enabled" : "Disabled"}
+                      {settings.desktopNotifications ? "Enabled" : "Disabled"}
                     </Label>
                   </div>
                 </div>
@@ -352,12 +386,12 @@ const SettingsPage = () => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <Switch 
-                      checked={isMoneyHidden} 
-                      onCheckedChange={toggleMoneyVisibility}
+                      checked={settings.isMoneyHidden} 
+                      onCheckedChange={(checked) => updateSetting("isMoneyHidden", checked)}
                       id="money-toggle"
                     />
                     <Label htmlFor="money-toggle" className="cursor-pointer">
-                      {isMoneyHidden ? "Hidden" : "Visible"}
+                      {settings.isMoneyHidden ? "Hidden" : "Visible"}
                     </Label>
                   </div>
                 </div>
@@ -373,12 +407,12 @@ const SettingsPage = () => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <Switch 
-                      checked={autoLock}
-                      onCheckedChange={setAutoLock}
+                      checked={settings.autoLock}
+                      onCheckedChange={(checked) => updateSetting("autoLock", checked)}
                       id="autolock-toggle"
                     />
                     <Label htmlFor="autolock-toggle" className="cursor-pointer">
-                      {autoLock ? "Enabled" : "Disabled"}
+                      {settings.autoLock ? "Enabled" : "Disabled"}
                     </Label>
                   </div>
                 </div>
@@ -394,12 +428,12 @@ const SettingsPage = () => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <Switch 
-                      checked={dataCollection}
-                      onCheckedChange={setDataCollection}
+                      checked={settings.dataCollection}
+                      onCheckedChange={(checked) => updateSetting("dataCollection", checked)}
                       id="data-collection-toggle"
                     />
                     <Label htmlFor="data-collection-toggle" className="cursor-pointer">
-                      {dataCollection ? "Enabled" : "Disabled"}
+                      {settings.dataCollection ? "Enabled" : "Disabled"}
                     </Label>
                   </div>
                 </div>
@@ -423,22 +457,24 @@ const SettingsPage = () => {
                   Advanced Settings
                 </CardTitle>
                 <CardDescription>
-                  Additional options for advanced users and data management
+                  Configure database and system settings (for administrators)
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-0.5">
-                    <Label className="text-base">Data Export</Label>
+                    <Label className="text-base" htmlFor="company-name">Company Name</Label>
                     <div className="text-sm text-muted-foreground">
-                      Export all inventory and sales data as CSV
+                      Used in receipts, reports and other official documents
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Button variant="outline" className="flex items-center gap-2">
-                      <Share2 className="h-4 w-4" />
-                      Export
-                    </Button>
+                  <div className="w-full sm:max-w-[250px]">
+                    <Input 
+                      id="company-name" 
+                      value={settings.companyName || ''} 
+                      onChange={(e) => updateSetting("companyName", e.target.value)}
+                      placeholder="Your Company Name"
+                    />
                   </div>
                 </div>
 
@@ -446,15 +482,21 @@ const SettingsPage = () => {
 
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-0.5">
-                    <Label className="text-base">Clear Cache</Label>
+                    <Label className="text-base" htmlFor="low-stock-threshold">Low Stock Threshold</Label>
                     <div className="text-sm text-muted-foreground">
-                      Clear locally stored cache data to free up space
+                      Receive alerts when inventory falls below this level
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Button variant="outline" className="flex items-center gap-2">
-                      Clear Cache
-                    </Button>
+                  <div className="w-full sm:max-w-[200px]">
+                    <Input 
+                      id="low-stock-threshold"
+                      type="number"
+                      min={1}
+                      max={100}
+                      value={settings.lowStockThreshold}
+                      onChange={(e) => updateSetting("lowStockThreshold", parseInt(e.target.value) || 5)}
+                      className="w-full"
+                    />
                   </div>
                 </div>
 
@@ -462,30 +504,36 @@ const SettingsPage = () => {
 
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-0.5">
-                    <Label className="text-base danger text-destructive">Reset All Data</Label>
+                    <Label className="text-base" htmlFor="currency">Currency</Label>
                     <div className="text-sm text-muted-foreground">
-                      Warning: This will reset all data and cannot be undone
+                      Default currency for transactions and reports
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Button 
-                      variant="destructive" 
-                      className="flex items-center gap-2"
-                      onClick={() => {
-                        if (confirm("Are you absolutely sure? This action cannot be undone.")) {
-                          toast({
-                            title: "Data Reset Initiated",
-                            description: "All data is being reset. This may take a moment.",
-                            variant: "destructive"
-                          });
-                        }
-                      }}
+                  <div className="w-full sm:max-w-[200px]">
+                    <select
+                      id="currency"
+                      className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm"
+                      value={settings.currency}
+                      onChange={(e) => updateSetting("currency", e.target.value)}
                     >
-                      Reset Data
-                    </Button>
+                      <option value="PKR">PKR - Pakistani Rupee</option>
+                      <option value="USD">USD - US Dollar</option>
+                      <option value="EUR">EUR - Euro</option>
+                      <option value="GBP">GBP - British Pound</option>
+                      <option value="INR">INR - Indian Rupee</option>
+                    </select>
                   </div>
                 </div>
               </CardContent>
+              <CardFooter className="bg-muted/50 px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <p className="text-xs text-muted-foreground">
+                  These settings require administrator privileges.
+                </p>
+                <Button size="sm" variant="outline" className="gap-1">
+                  <Database className="h-4 w-4" />
+                  Connect Database
+                </Button>
+              </CardFooter>
             </Card>
           </motion.div>
         </TabsContent>
@@ -499,77 +547,108 @@ const SettingsPage = () => {
                   Account Settings
                 </CardTitle>
                 <CardDescription>
-                  Manage your account details and preferences
+                  Manage your account preferences and profile information
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <Label htmlFor="businessName">Business Name</Label>
-                  <Input 
-                    id="businessName" 
-                    defaultValue="Subhan Computer" 
-                    onChange={() => setSettingsChanged(true)}
-                  />
-                </div>
-                
-                <div className="space-y-4">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input 
-                    id="email" 
-                    type="email"
-                    defaultValue="info@subhancomputer.com" 
-                    onChange={() => setSettingsChanged(true)}
-                  />
-                </div>
-                
-                <div className="space-y-4">
-                  <Label htmlFor="currency">Default Currency</Label>
-                  <div className="relative">
-                    <select 
-                      id="currency" 
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                      defaultValue="PKR"
-                      onChange={() => setSettingsChanged(true)}
-                    >
-                      <option value="PKR">Pakistani Rupee (PKR)</option>
-                      <option value="USD">US Dollar (USD)</option>
-                      <option value="EUR">Euro (EUR)</option>
-                      <option value="GBP">British Pound (GBP)</option>
-                    </select>
-                    <Globe className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="space-y-0.5">
+                    <Label className="text-base" htmlFor="email">Email</Label>
+                    <div className="text-sm text-muted-foreground">
+                      Your email address is used for notifications and sign-in
+                    </div>
+                  </div>
+                  <div className="w-full sm:max-w-[300px]">
+                    <Input
+                      id="email"
+                      type="email"
+                      value={settings.companyEmail || ''}
+                      onChange={(e) => updateSetting("companyEmail", e.target.value)}
+                      placeholder="your.email@example.com"
+                    />
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <Label htmlFor="language">Language</Label>
-                  <div className="relative">
-                    <select 
-                      id="language" 
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" 
-                      defaultValue="en"
-                      onChange={() => setSettingsChanged(true)}
+                <Separator />
+
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="space-y-0.5">
+                    <Label className="text-base" htmlFor="language">Language</Label>
+                    <div className="text-sm text-muted-foreground">
+                      Choose your preferred language for the interface
+                    </div>
+                  </div>
+                  <div className="w-full sm:max-w-[200px]">
+                    <select
+                      id="language"
+                      className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm"
+                      value={settings.language}
+                      onChange={(e) => updateSetting("language", e.target.value)}
                     >
                       <option value="en">English</option>
+                      <option value="fr">Français</option>
+                      <option value="es">Español</option>
+                      <option value="de">Deutsch</option>
                       <option value="ur">Urdu</option>
-                      <option value="ar">Arabic</option>
                     </select>
-                    <Globe className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                   </div>
                 </div>
               </CardContent>
-              <CardFooter className="bg-muted/50 px-6 py-3 flex items-center justify-between">
-                <div className="flex items-center text-xs text-muted-foreground">
-                  <ShieldCheck className="h-4 w-4 mr-2" />
-                  Your account is secure
+              <CardFooter className="bg-muted/50 px-6 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <p className="text-xs text-muted-foreground">
+                  Account settings are synced across all your devices.
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button size="sm" variant="subtle" className="gap-1">
+                    <Share2 className="h-4 w-4" />
+                    Export Settings
+                  </Button>
+                  <Button size="sm" variant="destructive" className="gap-1">
+                    Sign Out
+                  </Button>
                 </div>
-                <Button variant="link" size="sm" className="text-xs">
-                  Change Password
-                </Button>
               </CardFooter>
             </Card>
           </motion.div>
         </TabsContent>
       </Tabs>
+      
+      {/* Reset Confirmation Dialog */}
+      <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reset all settings</DialogTitle>
+            <DialogDescription>
+              This will reset all your settings to their default values. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="bg-muted/50 p-4 rounded-md border border-muted">
+            <p className="text-sm text-muted-foreground">
+              The following settings will be reset:
+            </p>
+            <ul className="mt-2 text-sm space-y-1 list-disc list-inside">
+              <li>Theme preferences</li>
+              <li>Font size and display settings</li>
+              <li>Notification preferences</li>
+              <li>Privacy and security settings</li>
+              <li>Company information</li>
+              <li>Language and regional settings</li>
+            </ul>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button 
+              variant="destructive" 
+              onClick={handleResetSettings}
+              isLoading={isLoading}
+            >
+              Reset All Settings
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
