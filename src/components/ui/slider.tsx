@@ -50,7 +50,7 @@ const Slider = React.forwardRef<
       {...props}
     >
       <SliderPrimitive.Track 
-        className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+        className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
         <SliderPrimitive.Range className="absolute h-full bg-blue-500 dark:bg-blue-400" />
       </SliderPrimitive.Track>
       {Array.isArray(props.value) ? 
@@ -58,7 +58,7 @@ const Slider = React.forwardRef<
           <React.Fragment key={index}>
             <SliderPrimitive.Thumb 
               className={cn(
-                "block h-4 w-4 rounded-full border border-gray-200 bg-white shadow-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-blue-50 cursor-pointer dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700",
+                "block h-4 w-4 rounded-full border border-gray-200 bg-white shadow-md ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-blue-50 cursor-pointer dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700",
                 props.disabled && "opacity-50 cursor-not-allowed"
               )}
               onMouseEnter={() => setHoveredThumb(index)}
@@ -70,7 +70,7 @@ const Slider = React.forwardRef<
             {showTooltip && hoveredThumb === index && (
               <div 
                 className={cn(
-                  "absolute -top-8 rounded-md bg-blue-500 text-white px-2 py-1 text-xs animate-fade-in shadow-sm",
+                  "absolute -top-8 rounded-md bg-blue-500 text-white px-2 py-1 text-xs animate-fade-in shadow-md",
                   tooltipClassName
                 )}
                 style={{
@@ -86,7 +86,7 @@ const Slider = React.forwardRef<
           <>
             <SliderPrimitive.Thumb 
               className={cn(
-                "block h-4 w-4 rounded-full border border-gray-200 bg-white shadow-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-blue-50 cursor-pointer dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700",
+                "block h-5 w-5 rounded-full border border-gray-200 bg-white shadow-md ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-blue-50 cursor-pointer dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700",
                 props.disabled && "opacity-50 cursor-not-allowed"
               )}
               onMouseEnter={() => setHoveredThumb(0)}
@@ -98,7 +98,7 @@ const Slider = React.forwardRef<
             {showTooltip && hoveredThumb === 0 && props.value !== undefined && (
               <div 
                 className={cn(
-                  "absolute -top-8 rounded-md bg-blue-500 text-white px-2 py-1 text-xs animate-fade-in shadow-sm",
+                  "absolute -top-8 rounded-md bg-blue-500 text-white px-2 py-1 text-xs animate-fade-in shadow-md",
                   tooltipClassName
                 )}
                 style={{

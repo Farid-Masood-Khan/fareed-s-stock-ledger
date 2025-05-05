@@ -3,10 +3,9 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { 
-  LayoutDashboard, Package, Receipt, User, Users, 
-  CircleDollarSign, PieChart, Settings, FileBarChart, 
-  ClipboardList, Info, Phone, X, 
-  ChevronLeft, ChevronRight 
+  LayoutDashboard, Package, ShoppingBag, Users, User,
+  DollarSign, BarChart3, LineChart, ClipboardList, 
+  Info, Phone, Settings, ChevronLeft, ChevronRight, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSettings } from "@/context/SettingsContext";
@@ -49,51 +48,43 @@ const Sidebar: React.FC<SidebarProps> = ({
     {
       name: "Inventory",
       path: "/inventory",
-      icon: <Package className="h-5 w-5" />,
-      badge: "12"
+      icon: <Package className="h-5 w-5" />
     },
     {
       name: "Sales",
       path: "/sales",
-      icon: <Receipt className="h-5 w-5" />
+      icon: <ShoppingBag className="h-5 w-5" />
     },
     {
       name: "Customers",
       path: "/customers",
-      icon: <User className="h-5 w-5" />
+      icon: <Users className="h-5 w-5" />
     },
     {
       name: "Shopkeepers",
       path: "/shopkeepers",
-      icon: <Users className="h-5 w-5" />,
-      badge: "New"
+      icon: <User className="h-5 w-5" />
     },
     {
       name: "Expenses",
       path: "/expenses",
-      icon: <CircleDollarSign className="h-5 w-5" />
+      icon: <DollarSign className="h-5 w-5" />
     },
     {
       name: "Reports",
       path: "/reports",
-      icon: <FileBarChart className="h-5 w-5" />
+      icon: <BarChart3 className="h-5 w-5" />
     },
     {
       name: "Financial",
       path: "/financial",
-      icon: <PieChart className="h-5 w-5" />
+      icon: <LineChart className="h-5 w-5" />
     },
     {
       name: "Services",
       path: "/services",
-      icon: <ClipboardList className="h-5 w-5" />,
-      badge: "5"
-    }
-  ];
-
-  // Group menu items by category
-  const mainMenuItems = menuItems.slice(0, 9);
-  const secondaryMenuItems = [
+      icon: <ClipboardList className="h-5 w-5" />
+    },
     {
       name: "About",
       path: "/about",
@@ -133,7 +124,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
         className={cn(
-          "fixed inset-y-0 left-0 z-50 bg-white dark:bg-gray-900 border-r overflow-hidden pt-20 lg:translate-x-0 lg:static lg:z-0 shadow-sm",
+          "fixed inset-y-0 left-0 z-50 bg-white dark:bg-gray-900 border-r overflow-hidden pt-16 lg:translate-x-0 lg:static lg:z-0 shadow-sm",
           settings?.theme === "dark" ? "dark border-gray-800" : "border-gray-200"
         )}
       >
@@ -148,17 +139,21 @@ const Sidebar: React.FC<SidebarProps> = ({
           <div className="px-3 py-2 flex flex-col min-h-[calc(100vh-120px)]">
             {/* Header */}
             <div className={cn(
-              "flex items-center px-2 py-3", 
+              "flex items-center mb-4 px-2 py-2", 
               collapsed ? "justify-center" : "justify-between"
             )}>
               {!collapsed && (
-                <span className="font-medium text-blue-600 dark:text-blue-400">Subhan Computer</span>
+                <div className="flex items-center">
+                  <span className="font-medium text-gray-800 dark:text-gray-200">
+                    <span className="text-blue-600 dark:text-blue-400">Subhan</span> Computer
+                  </span>
+                </div>
               )}
             </div>
 
-            {/* Main navigation */}
-            <div className="space-y-1 mt-2">
-              {mainMenuItems.map((item) => (
+            {/* Navigation items */}
+            <div className="space-y-1">
+              {menuItems.map((item) => (
                 <Tooltip key={item.path} delayDuration={collapsed ? 300 : 1000}>
                   <TooltipTrigger asChild>
                     <NavLink
@@ -166,11 +161,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                       className={({ isActive }) => cn(
                         "flex items-center rounded-lg transition-all duration-200 ease-in-out",
                         collapsed 
-                          ? "justify-center p-2.5" 
+                          ? "justify-center h-10 w-10 mx-auto" 
                           : "px-3 py-2.5 text-sm font-medium",
                         isActive 
-                          ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 font-medium" 
-                          : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800/60"
+                          ? "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100" 
+                          : "text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800/60"
                       )}
                       onClick={() => {
                         if (window.innerWidth < 1024) {
@@ -186,67 +181,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                           {item.icon}
                         </span>
                         {!collapsed && (
-                          <div className="flex justify-between items-center w-full">
-                            <span className="truncate">{item.name}</span>
-                            {item.badge && (
-                              <Badge variant="outline" className="ml-2 h-5 bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 border-blue-500/30 text-xs">
-                                {item.badge}
-                              </Badge>
-                            )}
-                          </div>
+                          <span className="truncate">{item.name}</span>
                         )}
-                      </span>
-                    </NavLink>
-                  </TooltipTrigger>
-                  {collapsed && (
-                    <TooltipContent side="right" sideOffset={10} className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-800 shadow-lg">
-                      <span className="flex items-center gap-2">
-                        {item.name}
-                        {item.badge && (
-                          <Badge variant="outline" className="h-5 bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 border-blue-500/30 text-xs">
-                            {item.badge}
-                          </Badge>
-                        )}
-                      </span>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              ))}
-            </div>
-            
-            {/* Divider */}
-            <div className={cn("my-3 border-t border-gray-200 dark:border-gray-800", collapsed && "mx-2")} />
-
-            {/* Secondary navigation */}
-            <div className="space-y-1">
-              {secondaryMenuItems.map((item) => (
-                <Tooltip key={item.path} delayDuration={collapsed ? 300 : 1000}>
-                  <TooltipTrigger asChild>
-                    <NavLink
-                      to={item.path}
-                      className={({ isActive }) => cn(
-                        "flex items-center rounded-lg transition-all duration-200 ease-in-out",
-                        collapsed 
-                          ? "justify-center p-2.5" 
-                          : "px-3 py-2.5 text-sm font-medium",
-                        isActive 
-                          ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 font-medium" 
-                          : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800/60"
-                      )}
-                      onClick={() => {
-                        if (window.innerWidth < 1024) {
-                          toggleSidebar();
-                        }
-                      }}
-                    >
-                      <span className={cn("flex items-center", collapsed ? "justify-center" : "")}>
-                        <span className={cn(
-                          "flex items-center justify-center", 
-                          !collapsed && "mr-3"
-                        )}>
-                          {item.icon}
-                        </span>
-                        {!collapsed && <span className="truncate">{item.name}</span>}
                       </span>
                     </NavLink>
                   </TooltipTrigger>
@@ -260,32 +196,34 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
             
             {/* Footer */}
-            <div className="mt-auto pt-4 text-xs text-center text-gray-500 dark:text-gray-500">
+            <div className="mt-auto pt-4">
               {!collapsed && (
-                <div>Subhan Computer © 2023</div>
+                <div className="text-xs text-center text-gray-500 dark:text-gray-500">
+                  Subhan Computer © 2023
+                </div>
               )}
-            </div>
-            
-            {/* Expand/collapse button */}
-            <div className="mt-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "w-full justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300 group transition-all duration-200",
-                  !collapsed && "justify-between"
-                )}
-                onClick={() => setCollapsed(!collapsed)}
-              >
-                {collapsed ? (
-                  <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
-                ) : (
-                  <>
-                    <span className="text-xs font-medium">Collapse sidebar</span>
-                    <ChevronLeft className="h-5 w-5 transition-transform group-hover:-translate-x-0.5" />
-                  </>
-                )}
-              </Button>
+              
+              {/* Expand/collapse button */}
+              <div className="mt-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "w-full justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300 group transition-all duration-200",
+                    !collapsed && "justify-between"
+                  )}
+                  onClick={() => setCollapsed(!collapsed)}
+                >
+                  {collapsed ? (
+                    <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+                  ) : (
+                    <>
+                      <span className="text-xs font-medium">Collapse sidebar</span>
+                      <ChevronLeft className="h-5 w-5 transition-transform group-hover:-translate-x-0.5" />
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
         </ScrollArea>

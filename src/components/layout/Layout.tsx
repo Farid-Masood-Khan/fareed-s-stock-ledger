@@ -31,10 +31,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
   }, [location.pathname, isMobile]);
 
-  // Apply font size data attribute based on settings
+  // Apply font size and theme data attributes based on settings
   useEffect(() => {
     document.documentElement.setAttribute('data-font-size', settings.fontSize);
-  }, [settings.fontSize]);
+    document.documentElement.setAttribute('data-theme', settings.theme);
+  }, [settings.fontSize, settings.theme]);
 
   // Page transition variants
   const pageVariants = {
