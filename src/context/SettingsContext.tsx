@@ -106,7 +106,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
           const initialSettings = {
             ...defaultSettings,
-            theme: prefersDark ? "dark" : "light"
+            theme: prefersDark ? "dark" as const : "light" as const
           };
           setSettings(initialSettings);
           setOriginalSettings(initialSettings);

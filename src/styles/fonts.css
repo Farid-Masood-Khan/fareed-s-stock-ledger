@@ -1,0 +1,111 @@
+
+/* Import Inter font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Apply Inter font throughout the application */
+:root {
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height-normal: 1.5;
+  --line-height-tight: 1.2;
+  --letter-spacing-tight: -0.01em;
+}
+
+/* Apply font family to all elements */
+body, h1, h2, h3, h4, h5, h6, p, span, button, input, select, textarea, a, div {
+  font-family: var(--font-family);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* Typography scale */
+h1, .h1 {
+  font-size: 1.875rem; /* 30px */
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+h2, .h2 {
+  font-size: 1.5rem; /* 24px */
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+h3, .h3 {
+  font-size: 1.25rem; /* 20px */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+}
+
+h4, .h4 {
+  font-size: 1.125rem; /* 18px */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+}
+
+p, .body {
+  font-size: 0.9375rem; /* 15px */
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+.small-text {
+  font-size: 0.875rem; /* 14px */
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+.caption {
+  font-size: 0.75rem; /* 12px */
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+/* Button text */
+button, .button {
+  font-size: 0.875rem; /* 14px */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+}
+
+/* Table text */
+table {
+  font-size: 0.9375rem; /* 15px */
+  line-height: var(--line-height-normal);
+}
+
+/* Form labels */
+label, .label {
+  font-size: 0.875rem; /* 14px */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+}
+
+/* Navigation items */
+.nav-item {
+  font-size: 0.9375rem; /* 15px */
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+}
+
+/* Card titles */
+.card-title {
+  font-size: 1.125rem; /* 18px */
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+/* Font size adjustments based on settings */
+html[data-font-size="small"] {
+  font-size: 0.9375rem; /* 15px */
+}
+
+html[data-font-size="medium"] {
+  font-size: 1rem; /* 16px - default */
+}
+
+html[data-font-size="large"] {
+  font-size: 1.0625rem; /* 17px */
+}

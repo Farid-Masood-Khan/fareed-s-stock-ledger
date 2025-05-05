@@ -4,8 +4,8 @@ import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, Package, Receipt, User, Users, 
-  CreditCard, PieChart, Settings, FileBarChart, 
-  CircleDollarSign, ClipboardList, Info, Mail, X, 
+  CircleDollarSign, PieChart, Settings, FileBarChart, 
+  ClipboardList, Info, Phone, X, 
   ChevronLeft, ChevronRight 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -102,7 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     {
       name: "Contact",
       path: "/contact",
-      icon: <Mail className="h-5 w-5" />
+      icon: <Phone className="h-5 w-5" />
     },
     {
       name: "Settings",
@@ -133,34 +133,44 @@ const Sidebar: React.FC<SidebarProps> = ({
         }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
         className={cn(
-          "fixed inset-y-0 left-0 z-50 bg-gradient-to-b from-card/90 to-background/90 dark:from-card/80 dark:to-background/80 border-r overflow-hidden pt-20 lg:translate-x-0 lg:static lg:z-0 shadow-lg backdrop-blur-md",
-          settings?.theme === "dark" ? "dark border-border/30" : "border-border/60"
+          "fixed inset-y-0 left-0 z-50 bg-white dark:bg-gray-900 border-r overflow-hidden pt-20 lg:translate-x-0 lg:static lg:z-0 shadow-sm",
+          settings?.theme === "dark" ? "dark border-gray-800" : "border-gray-200"
         )}
       >
         <div className="flex items-center justify-between px-4 py-2 lg:hidden">
-          <h2 className="text-lg font-semibold text-foreground/90 bg-gradient-to-r from-brand-600 to-brand-500 bg-clip-text text-transparent">Stock Ledger</h2>
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Subhan Computer</h2>
           <Button variant="ghost" size="sm" onClick={toggleSidebar} className="rounded-full h-8 w-8 p-0">
-            <X className="h-4.5 w-4.5" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
 
         <ScrollArea className="h-[calc(100%-60px)]">
-          <div className="px-3 py-4 flex flex-col min-h-[calc(100vh-120px)]">
+          <div className="px-3 py-2 flex flex-col min-h-[calc(100vh-120px)]">
+            {/* Header */}
+            <div className={cn(
+              "flex items-center px-2 py-3", 
+              collapsed ? "justify-center" : "justify-between"
+            )}>
+              {!collapsed && (
+                <span className="font-medium text-blue-600 dark:text-blue-400">Subhan Computer</span>
+              )}
+            </div>
+
             {/* Main navigation */}
-            <div className="space-y-1.5">
+            <div className="space-y-1 mt-2">
               {mainMenuItems.map((item) => (
                 <Tooltip key={item.path} delayDuration={collapsed ? 300 : 1000}>
                   <TooltipTrigger asChild>
                     <NavLink
                       to={item.path}
                       className={({ isActive }) => cn(
-                        "flex items-center rounded-lg transition-all duration-300 ease-in-out",
+                        "flex items-center rounded-lg transition-all duration-200 ease-in-out",
                         collapsed 
                           ? "justify-center p-2.5" 
                           : "px-3 py-2.5 text-sm font-medium",
                         isActive 
-                          ? "bg-gradient-to-r from-brand-500/20 to-brand-500/5 text-brand-600 dark:text-brand-400 font-medium shadow-sm border-l-2 border-l-brand-500 dark:shadow-brand-900/20" 
-                          : "hover:bg-muted/60 text-foreground/70 hover:text-foreground hover:shadow-sm"
+                          ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 font-medium" 
+                          : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800/60"
                       )}
                       onClick={() => {
                         if (window.innerWidth < 1024) {
@@ -179,7 +189,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                           <div className="flex justify-between items-center w-full">
                             <span className="truncate">{item.name}</span>
                             {item.badge && (
-                              <Badge variant="outline" className="ml-2 h-5 bg-brand-500/10 text-brand-600 border-brand-500/30 text-xs">
+                              <Badge variant="outline" className="ml-2 h-5 bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 border-blue-500/30 text-xs">
                                 {item.badge}
                               </Badge>
                             )}
@@ -189,11 +199,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </NavLink>
                   </TooltipTrigger>
                   {collapsed && (
-                    <TooltipContent side="right" sideOffset={10} className="bg-card/95 text-foreground border border-border shadow-lg backdrop-blur-sm">
+                    <TooltipContent side="right" sideOffset={10} className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-800 shadow-lg">
                       <span className="flex items-center gap-2">
                         {item.name}
                         {item.badge && (
-                          <Badge variant="outline" className="h-5 bg-brand-500/10 text-brand-600 border-brand-500/30 text-xs">
+                          <Badge variant="outline" className="h-5 bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 border-blue-500/30 text-xs">
                             {item.badge}
                           </Badge>
                         )}
@@ -205,23 +215,23 @@ const Sidebar: React.FC<SidebarProps> = ({
             </div>
             
             {/* Divider */}
-            <div className={cn("my-3 border-t border-border/50", collapsed && "mx-2")} />
+            <div className={cn("my-3 border-t border-gray-200 dark:border-gray-800", collapsed && "mx-2")} />
 
             {/* Secondary navigation */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               {secondaryMenuItems.map((item) => (
                 <Tooltip key={item.path} delayDuration={collapsed ? 300 : 1000}>
                   <TooltipTrigger asChild>
                     <NavLink
                       to={item.path}
                       className={({ isActive }) => cn(
-                        "flex items-center rounded-lg transition-all duration-300 ease-in-out",
+                        "flex items-center rounded-lg transition-all duration-200 ease-in-out",
                         collapsed 
                           ? "justify-center p-2.5" 
                           : "px-3 py-2.5 text-sm font-medium",
                         isActive 
-                          ? "bg-gradient-to-r from-brand-500/20 to-brand-500/5 text-brand-600 dark:text-brand-400 font-medium shadow-sm border-l-2 border-l-brand-500 dark:shadow-brand-900/20" 
-                          : "hover:bg-muted/60 text-foreground/70 hover:text-foreground hover:shadow-sm"
+                          ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 font-medium" 
+                          : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800/60"
                       )}
                       onClick={() => {
                         if (window.innerWidth < 1024) {
@@ -241,7 +251,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </NavLink>
                   </TooltipTrigger>
                   {collapsed && (
-                    <TooltipContent side="right" sideOffset={10} className="bg-card/95 text-foreground border border-border shadow-lg backdrop-blur-sm">
+                    <TooltipContent side="right" sideOffset={10} className="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-800 shadow-lg">
                       {item.name}
                     </TooltipContent>
                   )}
@@ -249,13 +259,20 @@ const Sidebar: React.FC<SidebarProps> = ({
               ))}
             </div>
             
+            {/* Footer */}
+            <div className="mt-auto pt-4 text-xs text-center text-gray-500 dark:text-gray-500">
+              {!collapsed && (
+                <div>Subhan Computer © 2023</div>
+              )}
+            </div>
+            
             {/* Expand/collapse button */}
-            <div className="mt-auto pt-4">
+            <div className="mt-4">
               <Button
                 variant="ghost"
                 size="sm"
                 className={cn(
-                  "w-full justify-center rounded-lg hover:bg-muted/60 group transition-all duration-300",
+                  "w-full justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300 group transition-all duration-200",
                   !collapsed && "justify-between"
                 )}
                 onClick={() => setCollapsed(!collapsed)}

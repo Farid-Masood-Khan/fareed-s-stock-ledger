@@ -1,4 +1,3 @@
-
 /* Import base styles and variables */
 @import './styles/base.css';
 
@@ -18,6 +17,9 @@
 
 /* Import responsive styles */
 @import './styles/responsive.css';
+
+/* Import font styles */
+@import "./styles/fonts.css";
 
 /* Global styles */
 html {

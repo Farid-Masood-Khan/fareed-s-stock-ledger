@@ -31,6 +31,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
   }, [location.pathname, isMobile]);
 
+  // Apply font size data attribute based on settings
+  useEffect(() => {
+    document.documentElement.setAttribute('data-font-size', settings.fontSize);
+  }, [settings.fontSize]);
+
   // Page transition variants
   const pageVariants = {
     initial: {
@@ -71,8 +76,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} currentPath={location.pathname} />
         
         {/* Main content with scroll */}
-        <div className="flex-1 flex flex-col h-full overflow-hidden w-full bg-gradient-to-br from-background/50 to-background/70 backdrop-blur-sm">
-          <ScrollArea className="flex-1 scrollbar-custom">
+        <div className="flex-1 flex flex-col h-full overflow-hidden w-full bg-gray-50 dark:bg-gray-900/90">
+          <ScrollArea className="flex-1">
             <AnimatePresence mode="wait">
               <motion.main
                 key={location.pathname}
