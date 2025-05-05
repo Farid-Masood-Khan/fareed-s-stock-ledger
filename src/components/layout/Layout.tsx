@@ -63,7 +63,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   
   return (
     <div 
-      className={`h-screen flex flex-col ${settings?.theme === "dark" ? "dark" : ""}`}
+      className={cn(
+        "h-screen flex flex-col",
+        settings?.theme === "dark" ? "dark" : ""
+      )}
       data-theme={settings?.theme}
       aria-live="polite"
     >
