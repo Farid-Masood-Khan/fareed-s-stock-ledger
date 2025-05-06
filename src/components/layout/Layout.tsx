@@ -35,7 +35,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   useEffect(() => {
     document.documentElement.setAttribute('data-font-size', settings.fontSize);
     document.documentElement.setAttribute('data-theme', settings.theme);
-  }, [settings.fontSize, settings.theme]);
+    
+    // Apply animations class if enabled
+    if (settings.animationsEnabled) {
+      document.documentElement.classList.add('animations-enabled');
+    } else {
+      document.documentElement.classList.remove('animations-enabled');
+    }
+  }, [settings.fontSize, settings.theme, settings.animationsEnabled]);
 
   // Page transition variants
   const pageVariants = {
@@ -47,7 +54,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.3,
+        duration: 0.4,
         ease: "easeOut"
       }
     },
@@ -55,7 +62,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       opacity: 0,
       y: -5,
       transition: {
-        duration: 0.2,
+        duration: 0.3,
         ease: "easeIn"
       }
     }
@@ -70,8 +77,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       data-theme={settings?.theme}
       aria-live="polite"
     >
-      {/* Fixed top navbar */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-transparent">
+      {/* Fixed top navbar with glassmorphism effect */}
+      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800/50">
         <Navbar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       </header>
       
@@ -80,8 +87,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} currentPath={location.pathname} />
         
         {/* Main content with scroll */}
-        <div className="flex-1 flex flex-col h-full overflow-hidden w-full bg-gray-50 dark:bg-gray-900/90">
-          <ScrollArea className="flex-1">
+        <div className="flex-1 flex flex-col h-full overflow-hidden w-full bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+          <ScrollArea className="flex-1 scrollbar-custom">
             <AnimatePresence mode="wait">
               <motion.main
                 key={location.pathname}

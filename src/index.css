@@ -10,6 +10,7 @@
 
 /* Import animation styles */
 @import './styles/animations.css';
+@import './styles/enhanced-animations.css';
 
 /* Import page-specific styles */
 @import './styles/pages/dashboard.css';
@@ -23,6 +24,10 @@
 @import "./styles/fonts.css";
 
 /* Global styles */
+:root {
+  --brand-rgb: 59, 130, 246; /* Use your brand color in RGB format */
+}
+
 html {
   scroll-behavior: smooth;
   height: 100%;
@@ -223,4 +228,27 @@ a, button {
 
 .status-inactive {
   @apply bg-muted-foreground/40;
+}
+
+/* Page transitions */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms, transform 300ms;
 }

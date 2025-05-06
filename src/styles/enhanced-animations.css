@@ -1,0 +1,136 @@
+
+/* Enhanced animations for UI elements */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideRightFade {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(var(--brand-rgb), 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(var(--brand-rgb), 0.8);
+  }
+}
+
+@keyframes gentle-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.slide-up-fade {
+  animation: slideUpFade 0.6s ease-out forwards;
+}
+
+.slide-right-fade {
+  animation: slideRightFade 0.6s ease-out forwards;
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s infinite;
+}
+
+.staggered-children > * {
+  opacity: 0;
+  animation: slideUpFade 0.5s ease-out forwards;
+}
+
+.staggered-children > *:nth-child(1) { animation-delay: 0.1s; }
+.staggered-children > *:nth-child(2) { animation-delay: 0.2s; }
+.staggered-children > *:nth-child(3) { animation-delay: 0.3s; }
+.staggered-children > *:nth-child(4) { animation-delay: 0.4s; }
+.staggered-children > *:nth-child(5) { animation-delay: 0.5s; }
+.staggered-children > *:nth-child(6) { animation-delay: 0.6s; }
+.staggered-children > *:nth-child(7) { animation-delay: 0.7s; }
+.staggered-children > *:nth-child(8) { animation-delay: 0.8s; }
+
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+}
+
+.dark .hover-lift:hover {
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3), 0 8px 10px -6px rgba(0,0,0,0.2);
+}
+
+.icon-bounce {
+  animation: gentle-bounce 3s ease-in-out infinite;
+}
+
+/* Professional card designs */
+.pro-card {
+  @apply rounded-xl border border-border/60 bg-gradient-to-b from-card to-card/95 p-6 shadow-sm transition-all duration-300;
+}
+
+.pro-card:hover {
+  @apply shadow-md border-brand-200/50 dark:border-brand-800/50;
+}
+
+/* Glassmorphism styles */
+.glass-panel {
+  @apply backdrop-blur-sm bg-white/70 dark:bg-black/30 rounded-xl border border-white/20 dark:border-white/10;
+}
+
+/* Section heading with accent line */
+.section-heading {
+  @apply relative pl-3 border-l-4 border-brand-500;
+}
+
+/* Animated underline for links */
+.animated-underline {
+  @apply relative inline-block;
+}
+
+.animated-underline::after {
+  content: '';
+  @apply absolute w-0 h-0.5 bg-brand-500 bottom-0 left-0 transition-all duration-300;
+}
+
+.animated-underline:hover::after {
+  @apply w-full;
+}
+
+/* Badge animations */
+.badge-pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Button hover effect */
+.btn-hover-effect {
+  @apply transition-all duration-300 relative overflow-hidden;
+}
+
+.btn-hover-effect::before {
+  content: '';
+  @apply absolute w-full h-full bg-white/10 -left-full top-0 skew-x-12 transition-all duration-700;
+}
+
+.btn-hover-effect:hover::before {
+  @apply left-full;
+}
